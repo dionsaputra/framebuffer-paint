@@ -128,6 +128,13 @@ void Wireframe::setPriority(int _priority) {
     priority = _priority;
 }
 
+bool Wireframe::isInEnvelope(Point point) {
+    int minX = topLeft.getX(), maxX = bottomRight.getX();
+    int minY = topLeft.getY(), maxY = bottomRight.getY();
+
+    return minX <= point.getX() && point.getX() <= maxX && minY <= point.getY() && point.getY() <= maxY;
+}
+
 Wireframe Wireframe::clippingResult(Wireframe window) {
     if (points.size() < 2) {
         return Wireframe();
