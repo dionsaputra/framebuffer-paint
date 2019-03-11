@@ -10,11 +10,9 @@
 #include <vector>
 #include "Drawer.h"
 #include "Point.h"
-#include "Line.h"
 #include "Color.h"
 #include "Wireframe.h"
-#include "Map.h"
-#include "Window.h"
+
 using namespace std;
 
 int main() {
@@ -23,15 +21,10 @@ int main() {
     Color red(10,80,100);
     Color green(0,250,0);
     
-    Map map("test.txt",red,green,drawer.vinfo.xres/2,drawer.vinfo.yres, 0);
-
     Point topLeft(drawer.vinfo.xres/2,0);
     Point bottomRight(drawer.vinfo.xres,drawer.vinfo.yres/2);
-    Window window(topLeft,bottomRight,map);
-    
-    drawer.clear_screen();
 
-    drawer.draw_Map(map, window);
+    drawer.clear_screen();
 
     char c;
     Point center(drawer.vinfo.xres/2,drawer.vinfo.yres/2);
