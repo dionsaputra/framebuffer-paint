@@ -9,14 +9,14 @@ vector<Wireframe> Parser::parseFile(string fileName) {
         string line;
         while (getline(file,line)) {
             vector<Point> points;
-            vector<string> vec = Map::split(line,"|");
-            vector<string> strPoints = Map::split(vec[1]," ");
+            vector<string> vec = Parser::split(line,"|");
+            vector<string> strPoints = Parser::split(vec[1]," ");
             for (int i=0; i<strPoints.size(); i++) {
-                vector<string> strXY = Map::split(strPoints[i].substr(1,strPoints[i].length()-2),",");
+                vector<string> strXY = Parser::split(strPoints[i].substr(1,strPoints[i].length()-2),",");
                 Point point(stoi(strXY[0]) * 10, stoi(strXY[1]) * 10);
                 points.push_back(point);
             }
-            vector<string>strXY = Map::split(vec[2].substr(1,vec[2].length()-2),",");
+            vector<string>strXY = Parser::split(vec[2].substr(1,vec[2].length()-2),",");
             Point innerPoint(stoi(strXY[0]) * 10, stoi(strXY[1]) * 10);
             Wireframe wireframe(points, innerPoint);
             wireframes.push_back(wireframe);
