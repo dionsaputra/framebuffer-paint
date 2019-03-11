@@ -19,10 +19,7 @@
 
 #include "Point.h"
 #include "Color.h"
-#include "Line.h"
 #include "Wireframe.h"
-#include "Map.h"
-#include "Window.h"
 
 class Drawer {
 public:
@@ -57,31 +54,13 @@ public:
     /*** Draw point by background color ***/
     void erase_point(Point point);
 
-    /*** Draw all point in line with line color ***/
-    void draw_line(Line line);
-
-    /*** Draw line by background color ***/
-    void erase_line(Line line);
-
     /*** Draw all line in wireframe with its color ***/
     void draw_wireframe(Wireframe wireframe);
 
     /*** Erase all line in wireframes ***/
     void erase_wireframe(Wireframe wireframe);
-    
-    /*** Draw and fill all wireframes in map ***/
-    void draw_Map(Map map, Wireframe window);
-
-    /*** Erase and unfill all wireframes in map ***/
-    void erase_Map(Map map);
-
-    void fill_util(int x, int y, Color prevColor, Color newColor, Point topLeft, Point bottomRight, Point topLeft2, Point bottomRight2);
-
-    void fill_wireframe(Wireframe wireframe, Point topLeft = Point(0,0), Point bottomRight = Point(-1,-1));
 
     void unfill_wireframe(Wireframe wireframe);
-
-    void clear_window(Wireframe window);
 
     void queueFloodFill(Wireframe wireframe);
 };

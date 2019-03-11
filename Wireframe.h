@@ -3,7 +3,6 @@
 
 #include <bits/stdc++.h>
 #include <vector>
-#include "Line.h"
 #include "Color.h"
 
 class Wireframe {
