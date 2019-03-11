@@ -3,7 +3,7 @@
 
 #include <bits/stdc++.h>
 #include <vector>
-#include "Line.h"
+#include "Point.h"
 #include "Color.h"
 
 class Wireframe {
@@ -13,7 +13,7 @@ private:
     Point innerPoint;
     Color fillColor;
     Color borderColor;
-    Vector<Point> points;
+    vector<Point> points;
     int priority;
 
 public:
