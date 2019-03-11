@@ -26,50 +26,54 @@ void Wireframe::translate(int dx, int dy){
     topLeft.translate(dx,dy);
     bottomRight.translate(dx,dy);
     innerPoint.translate(dx,dy);
-    
+
+    for (int i=0; i<points.size(); i++) {
+        points[i].translate(dx, dy);
+    }
 }
 
 void Wireframe::rotate(Point center, int degree){
-    for (int i=0; i < lines.size();i++){
-        lines[i].rotate(center, degree);
-    }
     innerPoint.rotate(center,degree);
+    for (int i=0; i<points.size(); i++) {
+        points[i].translate(dx,dy);
+    }
     updateEnvelope();
 }
 
 void Wireframe::scale(Point center, float skala){
-    for (int i=0; i < lines.size();i++){
-        lines[i].scale(center,skala);
-    }
     innerPoint.scale(center,skala);
+    for (int i=0; i<points.size(); i++) {
+        points[i].scale(dx, dy);
+    }
     updateEnvelope();
 }
 
 void Wireframe::updateEnvelope(){
-    int mLeft=lines[0].start().getX(),mRight=lines[0].start().getX();
-    int mTop=lines[0].start().getY(),mBottom=lines[0].start().getY();
-    
-    for (int i=1; i < lines.size(); i++){
-        // get top left and bottom right
-        if (lines[i].start().getX() < mLeft){
-            mLeft = lines[i].start().getX();
-        } else if (lines[i].start().getX() > mRight){
-            mRight = lines[i].start().getX();
-        }
-
-        if (lines[i].start().getY() < mTop){
-            mTop = lines[i].start().getY();
-        } else if (lines[i].start().getY() > mBottom){
-            mBottom = lines[i].start().getY();
-        }
+    if (points.size() == 0) {
+        return;
     }
 
-    topLeft = Point(mLeft,mTop);
-    bottomRight = Point(mRight,mBottom);
+    int minX = points[0].getX();
+    int minY = points[0].getY();
+    int maxX = points[0].getX();
+    int maxY = points[0].getY();
+    
+    for (int i=1; i<points.size(); i++) {
+        int currentX = points[i].getX();
+        int currentY = points[i].getY();
+
+        if (currentX < minX) minX = currentX;
+        if (currentX > maxX) maxX = currentX;
+        if (currentY < minY) minY = currentY;
+        if (currentY > maxY) maxY = currentY;
+    }
+
+    topLeft = Point(minX,minY);
+    bottomRight = Point(maxX, maxY);
 }
 
-vector<Line> Wireframe::getLines(){
-    return lines;
+vector<Point> Wireframe::getPoints() {
+    return points;
 }
 
 Point Wireframe::getTopLeft(){
@@ -81,7 +85,7 @@ Point Wireframe::getBottomRight(){
 }
 
 Point Wireframe::getInnerPoint() {
-    return this->innerPoint;
+    return innerPoint;
 }
 
 Color Wireframe::getFillColor(){
@@ -96,8 +100,8 @@ int Wireframe::getPriority() {
     return priority;
 }
 
-void Wireframe::setLines(vector<Line> _lines){
-    lines = _lines;
+void Wireframe::setPoints(vector<Point> _points) {
+    points = _points;
 }
 
 void Wireframe::setBottomRight(Point _bottomRight){
@@ -124,69 +128,30 @@ void Wireframe::setPriority(int _priority) {
     priority = _priority;
 }
 
-/*** Return true if point is in perimeter of the wireframe ***/
-bool Wireframe::is_in_perimeter(Point point) {
-    for (int i=0; i<lines.size(); i++) {
-        if (lines[i].isMember(point)) {
-            return true;
-        }
-    }
-    return false;
-}
-
-/*** Return true if point is inside or is in perimeter of wireframe ***/
-bool Wireframe::is_inside(Point point) {
-
-    if (is_in_perimeter(point)) return true;
-
-    int count = 0;
-    while (point.getX() <= bottomRight.getX()) {
-        if (is_in_perimeter(point)) {
-            count++;
-        }
-    }
-    return count%2 == 1;
-}
-
-Point Wireframe::getMostTopLeftPoint() {
-    Point point = lines[0].getMostTopLeftMember();
-    for (int i=1; i<lines.size(); i++) {
-        Point cmpPoint = lines[i].getMostTopLeftMember();
-        if (cmpPoint.getY() > point.getY()) {
-            point = cmpPoint;
-        }
-    }
-    return point;
-}
-
-bool Wireframe::isInEnvelope(Point point) {
-    int minX = topLeft.getX(), maxX = bottomRight.getX();
-    int minY = topLeft.getY(), maxY = bottomRight.getY();
-
-    return minX <= point.getX() && point.getX() <= maxX && minY <= point.getY() && point.getY() <= maxY;
-}
-
 Wireframe Wireframe::clippingResult(Wireframe window) {
-    Point previous;
-    Point current;
-    vector<Point> points;
-    for (int i=0; i<lines.size(); i++) {
-        previous = lines[i].start();
-        current = lines[i].end();
+    if (points.size() < 2) {
+        return Wireframe();
+    }
+    
+    vector<Point> clippingPoints;
+    for (int i=1; i<points.size(); i++) {
+        Point previous = points[i-1];
+        Point current = points[i];
+
         if (isInClip(previous, window) && isInClip(current, window)) {
-            points.push_back(current);
+            clippingPoints.push_back(current);
         } else if (isInClip(previous, window) && !isInClip(current, window)) {
-            points.push_back(intersect(previous, current, window));
+            clippingPoints.push_back(intersect(previous, current, window));
         } else if (!isInClip(previous, window) && isInClip(current, window)) {
-            points.push_back(intersect(current, previous, window));
-            points.push_back(current);
+            clippingPoints.push_back(intersect(current, previous, window));
+            clippingPoints.push_back(current);
         }
     }
 
-    if (points.size() == 0) {
+    if (clippingPoints.size() == 0) {
         return Wireframe();
     } else {
-        Wireframe wireframe(points, innerPoint);
+        Wireframe wireframe(clippingPoints, innerPoint);
         wireframe.setBorderColor(borderColor);
         wireframe.setFillColor(fillColor);
         wireframe.setPriority(priority);
