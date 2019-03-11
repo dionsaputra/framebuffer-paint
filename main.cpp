@@ -19,11 +19,12 @@ int main() {
     
     Color red(10,80,100);
     Color green(0,250,0);
+    vector<Point> controlPoint;
+    controlPoint.push_back(Point(100,100));
+    controlPoint.push_back(Point(100,200));
+    controlPoint.push_back(Point(200,100));
 
-    Point topLeft(drawer.vinfo.xres/2,0);
-    Point bottomRight(drawer.vinfo.xres,drawer.vinfo.yres/2);
+    Wireframe wireframe(controlPoint,red);
     drawer.clear_screen();
-
-    char c;
-    Point center(drawer.vinfo.xres/2,drawer.vinfo.yres/2);
+    drawer.draw_wireframe(wireframe);
 }

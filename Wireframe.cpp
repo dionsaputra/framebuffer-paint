@@ -35,7 +35,7 @@ void Wireframe::translate(int dx, int dy){
 void Wireframe::rotate(Point center, int degree){
     innerPoint.rotate(center,degree);
     for (int i=0; i<points.size(); i++) {
-        points[i].rotate(center,degree);
+        points[i].rotate(center, degree);
     }
     updateEnvelope();
 }
@@ -129,27 +129,29 @@ void Wireframe::setPriority(int _priority) {
 }
 
 Wireframe Wireframe::clippingResult(Wireframe window) {
-    Point previous;
-    Point current;
-    vector<Point> points;
+    if (points.size() < 2) {
+        return Wireframe();
+    }
+    
+    vector<Point> clippingPoints;
+    for (int i=1; i<points.size(); i++) {
+        Point previous = points[i-1];
+        Point current = points[i];
 
-    for (int i=0; i<points.size(); i++) {
-        previous = lines[i].start();
-        current = lines[i].end();
         if (isInClip(previous, window) && isInClip(current, window)) {
-            points.push_back(current);
+            clippingPoints.push_back(current);
         } else if (isInClip(previous, window) && !isInClip(current, window)) {
-            points.push_back(intersect(previous, current, window));
+            clippingPoints.push_back(intersect(previous, current, window));
         } else if (!isInClip(previous, window) && isInClip(current, window)) {
-            points.push_back(intersect(current, previous, window));
-            points.push_back(current);
+            clippingPoints.push_back(intersect(current, previous, window));
+            clippingPoints.push_back(current);
         }
     }
 
-    if (points.size() == 0) {
+    if (clippingPoints.size() == 0) {
         return Wireframe();
     } else {
-        Wireframe wireframe(points, innerPoint);
+        Wireframe wireframe(clippingPoints, innerPoint);
         wireframe.setBorderColor(borderColor);
         wireframe.setFillColor(fillColor);
         wireframe.setPriority(priority);

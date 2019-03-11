@@ -1,6 +1,7 @@
 #include "Drawer.h"
 #include <queue>
 
+vector<Point> bressenham(Point start, Point end);
 Drawer::Drawer() {
     fbfd = open("/dev/fb0", O_RDWR);
     if (fbfd == -1) {
@@ -78,7 +79,11 @@ void Drawer::erase_point(Point point) {
 void Drawer::draw_wireframe(Wireframe wireframe) {
     vector<Point> draw; 
     for (int i=0; i<wireframe.getPoints().size(); i++) {
-        draw = bressenham(wireframe.getPoints()[i], wireframe.getPoints()[i+1] if (i==(wireframe.getPoints().size() - 1)) wireframe.getPoints()[i+1] else );
+        if (i == wireframe.getPoints().size() - 1){ 
+            draw = bressenham(wireframe.getPoints()[i], wireframe.getPoints()[0]);
+        }else{
+            draw = bressenham(wireframe.getPoints()[i], wireframe.getPoints()[i+1]);
+        }
         for(int j=0; j<draw.size();j++){
             draw_point(draw[j],wireframe.getBorderColor());
         }
@@ -88,7 +93,11 @@ void Drawer::draw_wireframe(Wireframe wireframe) {
 void Drawer::erase_wireframe(Wireframe wireframe) {
     vector<Point> draw; 
     for (int i=0; i<wireframe.getPoints().size(); i++) {
-        draw = bressenham(wireframe.getPoints()[i], wireframe.getPoints()[i+1] if (i==(wireframe.getPoints().size() - 1)) wireframe.getPoints()[i+1] else );
+        if (i == wireframe.getPoints().size() - 1){ 
+            draw = bressenham(wireframe.getPoints()[i], wireframe.getPoints()[0]);
+        }else{
+            draw = bressenham(wireframe.getPoints()[i], wireframe.getPoints()[i+1]);
+        }
         for(int j=0; j<draw.size();j++){
             draw_point(draw[j],Color::background());
         }
