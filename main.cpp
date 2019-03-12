@@ -8,23 +8,44 @@
 #include <ctype.h>
 #include <time.h>
 #include <vector>
+#include <map>
+#include <iterator>
 #include "Drawer.h"
 #include "Point.h"
 #include "Color.h"
 #include "Wireframe.h"
+#include "Parser.h"
 using namespace std;
 
 int main() {
     Drawer drawer;
-    
-    Color red(10,80,100);
-    Color green(0,250,0);
-    vector<Point> controlPoint;
-    controlPoint.push_back(Point(100,100));
-    controlPoint.push_back(Point(100,200));
-    controlPoint.push_back(Point(200,100));
+    Parser parser;
+    string filename;
+    // cout << "input filename: ";
+    // cin >> filename;
 
-    Wireframe wireframe(controlPoint,red);
-    drawer.clear_screen();
-    drawer.draw_wireframe(wireframe);
+    // map<string,Wireframe> wireframes = parser.parseFile(filename);
+
+    // // drawer.clear_screen();
+    
+    // for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
+    //     cout << itr->first << endl;
+    //     drawer.draw_wireframe(itr->second);
+    //     drawer.queueFloodFill(itr->second);
+    // }
+
+    // parser.save(wireframes,"test.txt");
+    // Point topLeft(drawer.vinfo.xres/2,0);
+    // Point bottomRight(drawer.vinfo.xres,drawer.vinfo.yres/2);
+    vector<Point> cornerWindow;
+    // cout << drawer.vinfo.xres << endl;
+    // cout << drawer.vinfo.yres << endl;
+    Point cornerWindow_1(drawer.vinfo.xres / 4 - 50, 0), cornerWindow_2(drawer.vinfo.xres - 50, 0), cornerWindow_3(drawer.vinfo.xres - 50, drawer.vinfo.yres - 50), cornerWindow_4(drawer.vinfo.xres / 4 - 50, drawer.vinfo.yres - 50);
+    cornerWindow.push_back(cornerWindow_1);
+    cornerWindow.push_back(cornerWindow_2);
+    cornerWindow.push_back(cornerWindow_3);
+    cornerWindow.push_back(cornerWindow_4);    
+    Color green(0,250,0);
+    Wireframe window(cornerWindow, green);
+    drawer.draw_wireframe(window);
 }
