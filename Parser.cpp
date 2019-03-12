@@ -2,7 +2,7 @@
 
 vector<Wireframe> Parser::parseFile(string fileName) {
     vector<Wireframe> wireframes;
-
+    
     ifstream file;
     file.open(fileName);
     if (file.is_open()) {
