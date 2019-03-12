@@ -8,23 +8,31 @@
 #include <ctype.h>
 #include <time.h>
 #include <vector>
+#include <map>
+#include <iterator>
 #include "Drawer.h"
 #include "Point.h"
 #include "Color.h"
 #include "Wireframe.h"
+#include "Parser.h"
 using namespace std;
 
 int main() {
     Drawer drawer;
-    
-    Color red(10,80,100);
-    Color green(0,250,0);
-    vector<Point> controlPoint;
-    controlPoint.push_back(Point(100,100));
-    controlPoint.push_back(Point(100,200));
-    controlPoint.push_back(Point(200,100));
+    Parser parser;
+    string filename;
+    cout << "input filename: ";
+    cin >> filename;
 
-    Wireframe wireframe(controlPoint,red);
+    map<string,Wireframe> wireframes = parser.parseFile(filename);
+
     drawer.clear_screen();
-    drawer.draw_wireframe(wireframe);
+    
+    for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
+        cout << itr->first << endl;
+        drawer.draw_wireframe(itr->second);
+        drawer.queueFloodFill(itr->second);
+    }
+
+    parser.save(wireframes,"test.txt");
 }
