@@ -13,63 +13,63 @@
 #include "Drawer.h"
 #include "Point.h"
 #include "Color.h"
-#include "Wireframe.h"
 #include "Parser.h"
+#include "Wireframe.h"
 using namespace std;
 
-int main() {
-    Drawer drawer;
-    Parser parser;
-    string filename;
-    // cout << "input filename: ";
-    // cin >> filename;
+#include <stdio.h>
+#include <sys/types.h>
+#include <termios.h>
 
-    // map<string,Wireframe> wireframes = parser.parseFile(filename);
+// thread
+#include <cstdlib>
+#include <pthread.h>
+#define NUM_THREADS 1
 
-    // // drawer.clear_screen();
-    
-    // for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
-    //     cout << itr->first << endl;
-    //     drawer.draw_wireframe(itr->second);
-    //     drawer.queueFloodFill(itr->second);
-    // }
+// Global variable
+Drawer drawer;
+Parser parser;
+string filename;
 
-    // parser.save(wireframes,"test.txt");
-    // Point topLeft(drawer.vinfo.xres/2,0);
-    // Point bottomRight(drawer.vinfo.xres,drawer.vinfo.yres/2);
-    vector<Point> cornerWindow;
-    // cout << drawer.vinfo.xres << endl;
-    // cout << drawer.vinfo.yres << endl;
-    Point cornerWindow_1(drawer.vinfo.xres / 4 - 50, 0), cornerWindow_2(drawer.vinfo.xres - 50, 0), cornerWindow_3(drawer.vinfo.xres - 50, drawer.vinfo.yres - 50), cornerWindow_4(drawer.vinfo.xres / 4 - 50, drawer.vinfo.yres - 50);
-    cornerWindow.push_back(cornerWindow_1);
-    cornerWindow.push_back(cornerWindow_2);
-    cornerWindow.push_back(cornerWindow_3);
-    cornerWindow.push_back(cornerWindow_4);    
-    Color green(0,250,0);
-    Wireframe window(cornerWindow, green);
-    drawer.draw_wireframe(window);
+vector<Point> cornerWindow;
+string currentWireframe;
+
+map<string,Wireframe> wireframes;
+
+
+void *keyListener(void *threadid){
+    // thread identity
+    long tid;
+    tid = (long)threadid;
+
+    // Setup input mode
+    struct termios oldSettings, newSettings;
+
+    tcgetattr( fileno( stdin ), &oldSettings );
+    newSettings = oldSettings; 
+    newSettings.c_lflag &= (~ICANON & ~ECHO); // one key mode
+
+    fd_set set;
+    struct timeval tv;
+
+    tv.tv_sec = 10;
+    tv.tv_usec = 0;
+
+    FD_ZERO( &set );
+    FD_SET( fileno( stdin ), &set );
+
+    int res = select( fileno( stdin )+1, &set, NULL, NULL, &tv );
+
+    // tcsetattr( fileno( stdin ), TCSANOW, &newSettings ); // change to one key mode
+
+    // Receive command
     string inputCommand;
-    string currentWireframe;
-    cout << "input filename: ";
-    cin >> filename;
-
-    // <label,wireframe>
-    map<string,Wireframe> wireframes = parser.parseFile(filename);
-
-    // drawer.clear_screen();
-
     while(1){
-        for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
-            // cout << itr->first << endl;
-            drawer.draw_wireframe(itr->second);
-            drawer.queueFloodFill(itr->second);
-        }
-
         cout << "$";
         cin >> inputCommand;
-        // switch
-        if (inputCommand == "select"){
-            cout << "----list----"<<endl;
+        
+        if(inputCommand == "select"){
+            cout << "----list----" << endl;
             for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
                 if (currentWireframe == itr->first){
                     cout << itr->first << " Selected" << endl;    
@@ -80,15 +80,79 @@ int main() {
             cout << "------------" << endl;
             cin >> currentWireframe;
             cout << currentWireframe <<" Selected" << endl;
-        }else if (inputCommand == "save"){
+        } else if (inputCommand == "save"){
             cout << "filename: ";
             cin >> filename;
             parser.save(wireframes,filename);
             cout << "saved" << endl;
-        }else if (inputCommand == "current"){
+        } else if (inputCommand == "current"){
             cout << currentWireframe << endl;
+        } else if(inputCommand == "scroll"){
+            tcsetattr( fileno( stdin ), TCSANOW, &newSettings );
+            while ( 1 ){
+                if( res > 0 ){
+                    char c;
+                    read( fileno( stdin ), &c, 1 );
+                    printf( "Input available %c %d\n",c,c);
+                    if(c=='i'){
+                        // Change settings
+                        tcsetattr( fileno( stdin ), TCSANOW, &oldSettings );    
+                        break;
+                    }
+                }
+                else if( res < 0 )
+                {
+                    perror( "select error" );
+                    break;
+                }
+                else
+                {
+                    printf( "Select timeout\n" );
+                }
+            }
+        } else {
+            cout << "Command tidak ditemukan";
         }
+    }
 
+
+    
+
+    tcsetattr( fileno( stdin ), TCSANOW, &oldSettings );
+    return 0;
+}
+
+int main() {    
+    Point cornerWindow_1(drawer.vinfo.xres / 4 - 50, 0), cornerWindow_2(drawer.vinfo.xres - 50, 0), cornerWindow_3(drawer.vinfo.xres - 50, drawer.vinfo.yres - 50), cornerWindow_4(drawer.vinfo.xres / 4 - 50, drawer.vinfo.yres - 50);
+    cornerWindow.push_back(cornerWindow_1);
+    cornerWindow.push_back(cornerWindow_2);
+    cornerWindow.push_back(cornerWindow_3);
+    cornerWindow.push_back(cornerWindow_4);    
+    Color green(0,250,0);
+    Wireframe window(cornerWindow, green);
+    drawer.draw_wireframe(window);
+    string inputCommand;
+    cout << "input filename: ";
+    cin >> filename;
+    wireframes = parser.parseFile(filename);
+
+    // Start key listener 
+    pthread_t threads[0];
+    int rc;
+    
+    rc = pthread_create(&threads[0], NULL, keyListener, (void *)0);
+    
+    if (rc) {
+        cout << "Error:unable to create thread," << rc << endl;
+        exit(-1);
+    }
+
+    while(1){
+        for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
+            // cout << itr->first << endl;
+            drawer.draw_wireframe(itr->second);
+            drawer.queueFloodFill(itr->second);
+        }
     }
     
 }
