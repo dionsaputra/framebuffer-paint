@@ -33,10 +33,28 @@ void Wireframe::translate(int dx, int dy){
     }
 }
 
+void Wireframe::rotate(int degree){
+    Point center((bottomRight.getX()+topLeft.getX())/2, (bottomRight.getY()+topLeft.getY())/2);
+    innerPoint.rotate(center,degree);
+    for (int i=0; i<points.size(); i++) {
+        points[i].rotate(center, degree);
+    }
+    updateEnvelope();    
+}
+
 void Wireframe::rotate(Point center, int degree){
     innerPoint.rotate(center,degree);
     for (int i=0; i<points.size(); i++) {
         points[i].rotate(center, degree);
+    }
+    updateEnvelope();
+}
+
+void Wireframe::scale(float skala){
+    Point center((bottomRight.getX()+topLeft.getX())/2, (bottomRight.getY()+topLeft.getY())/2);
+    innerPoint.scale(center,skala);
+    for (int i=0; i<points.size(); i++) {
+        points[i].scale(center, skala);
     }
     updateEnvelope();
 }

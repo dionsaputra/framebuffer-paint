@@ -61,9 +61,13 @@ void *keyListener(void *threadid){
     int res = select( fileno( stdin )+1, &set, NULL, NULL, &tv );
 
     // tcsetattr( fileno( stdin ), TCSANOW, &newSettings ); // change to one key mode
+    // Load file
+    string inputCommand;
+    
+    cin >> filename;
+    wireframes = parser.parseFile(filename);
 
     // Receive command
-    string inputCommand;
     while(1){
         cout << "$";
         cin >> inputCommand;
@@ -80,12 +84,12 @@ void *keyListener(void *threadid){
             cout << "------------" << endl;
             cin >> currentWireframe;
             cout << currentWireframe <<" Selected" << endl;
-        } else if (inputCommand == "save"){
+        } else if (inputCommand == "save") {
             cout << "filename: ";
             cin >> filename;
             parser.save(wireframes,filename);
             cout << "saved" << endl;
-        } else if (inputCommand == "current"){
+        } else if (inputCommand == "current") {
             cout << currentWireframe << endl;
         } else if(inputCommand == "scroll"){
             tcsetattr( fileno( stdin ), TCSANOW, &newSettings );
@@ -110,13 +114,48 @@ void *keyListener(void *threadid){
                     printf( "Select timeout\n" );
                 }
             }
+        } else if (inputCommand == "exit") {
+            exit(1);
+        } else if (inputCommand == "translate" && currentWireframe != ""){
+            int move_x, move_y;
+            cout << "x y: ";
+            cin >> move_x >> move_y;
+            
+            for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
+                // cout << itr->first << endl;
+                drawer.erase_wireframe(itr->second);
+                drawer.unfill_wireframe(itr->second);
+            }
+
+            wireframes.find(currentWireframe)->second.translate(move_x, move_y);
+        } else if (inputCommand == "rotate" && currentWireframe != ""){
+            int degree;
+            cout << "degree: ";
+            cin >> degree;
+
+            for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
+                // cout << itr->first << endl;
+                drawer.erase_wireframe(itr->second);
+                drawer.unfill_wireframe(itr->second);
+            }
+
+            wireframes.find(currentWireframe)->second.rotate(degree);
+        } else if (inputCommand == "scale" && currentWireframe != "") {
+            int scale;
+            cout << "scale: ";
+            cin >> scale;
+            
+            for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
+                // cout << itr->first << endl;
+                drawer.erase_wireframe(itr->second);
+                drawer.unfill_wireframe(itr->second);
+            }
+
+            wireframes.find(currentWireframe)->second.scale(scale);
         } else {
-            cout << "Command tidak ditemukan";
+            cout << "Please enter a valid command" << endl;
         }
     }
-
-
-    
 
     tcsetattr( fileno( stdin ), TCSANOW, &oldSettings );
     return 0;
@@ -131,17 +170,12 @@ int main() {
     Color green(0,250,0);
     Wireframe window(cornerWindow, green);
     drawer.draw_wireframe(window);
-    string inputCommand;
-    cout << "input filename: ";
-    cin >> filename;
-    wireframes = parser.parseFile(filename);
-
+    
     // Start key listener 
     pthread_t threads[0];
     int rc;
     
     rc = pthread_create(&threads[0], NULL, keyListener, (void *)0);
-    
     if (rc) {
         cout << "Error:unable to create thread," << rc << endl;
         exit(-1);
