@@ -80,13 +80,51 @@ int main() {
             cout << "------------" << endl;
             cin >> currentWireframe;
             cout << currentWireframe <<" Selected" << endl;
-        }else if (inputCommand == "save"){
+        } else if (inputCommand == "save") {
             cout << "filename: ";
             cin >> filename;
             parser.save(wireframes,filename);
             cout << "saved" << endl;
-        }else if (inputCommand == "current"){
+        } else if (inputCommand == "current") {
             cout << currentWireframe << endl;
+        } else if (inputCommand == "exit") {
+            exit(1);
+        } else if (inputCommand == "translate" && currentWireframe != ""){
+            int move_x, move_y;
+            cout << "x y: ";
+            cin >> move_x >> move_y;
+            
+            for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
+                // cout << itr->first << endl;
+                drawer.erase_wireframe(itr->second);
+                drawer.unfill_wireframe(itr->second);
+            }
+
+            wireframes.find(currentWireframe)->second.translate(move_x, move_y);
+        } else if (inputCommand == "rotate" && currentWireframe != ""){
+            int degree;
+            cout << "degree: ";
+            cin >> degree;
+
+            for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
+                // cout << itr->first << endl;
+                drawer.erase_wireframe(itr->second);
+                drawer.unfill_wireframe(itr->second);
+            }
+
+            wireframes.find(currentWireframe)->second.rotate(degree);
+        } else if (inputCommand == "scale" && currentWireframe != "") {
+            int scale;
+            cout << "scale: ";
+            cin >> scale;
+            
+            for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
+                // cout << itr->first << endl;
+                drawer.erase_wireframe(itr->second);
+                drawer.unfill_wireframe(itr->second);
+            }
+
+            wireframes.find(currentWireframe)->second.scale(scale);
         }
 
     }

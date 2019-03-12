@@ -26,6 +26,8 @@ public:
     // Wireframe& operator=(const Wireframe& _wireframe);
 
     void translate(int dx, int dy);
+    void rotate(int degree);
+    void scale(float skala);
     void rotate(Point center, int degree);
     void scale(Point center, float skala);
 
