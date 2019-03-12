@@ -20,7 +20,7 @@ public:
     Wireframe();
     Wireframe(vector<Point> _controlPoint, Color _borderColor);
     Wireframe(vector<Point> _controlPoint, Point innerPoint);
-    Wireframe(vector<Point> _controlPoint, Color _colorFill, Color _borderColor, int priority);
+    Wireframe(vector<Point> _controlPoint, Point _innerPoint, Color _borderColor, Color _colorFill, int _priority);
     // ~Wireframe();
 
     // Wireframe& operator=(const Wireframe& _wireframe);

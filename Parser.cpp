@@ -24,22 +24,19 @@ map<string,Wireframe> Parser::parseFile(string fileName) {
                 vector<string>strXY = Parser::split(vec[2].substr(1,vec[2].length()-2),",");
                 Point innerPoint(stoi(strXY[0]) * 10, stoi(strXY[1]) * 10);
 
-                Wireframe wireframe(points, innerPoint);
-
                 // borderColor
                 vector<string> borderColorRGB = Parser::split(vec[3].substr(1,vec[3].length()-2),",");
                 Color borderColor(stoi(borderColorRGB[0]),stoi(borderColorRGB[1]),stoi(borderColorRGB[2]));
-                wireframe.setBorderColor(borderColor);
 
                 // fillColor
                 vector<string> fillColorRGB = Parser::split(vec[4].substr(1,vec[4].length()-2),",");
                 Color fillColor(stoi(fillColorRGB[0]),stoi(fillColorRGB[1]),stoi(fillColorRGB[2]));
-                wireframe.setFillColor(fillColor);
 
                 // priority
                 int priority = stoi(vec[5]);
-                wireframe.setPriority(priority);
 
+                
+                Wireframe wireframe(points, innerPoint,borderColor,fillColor,priority);
                 wireframes.insert(pair<string,Wireframe>(vec[0],wireframe));
             }
         }

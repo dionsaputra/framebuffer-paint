@@ -14,11 +14,12 @@ Wireframe::Wireframe(vector<Point> _controlPoint, Point _innerPoint){
     updateEnvelope();
 }
 
-Wireframe::Wireframe(vector<Point> _controlPoint, Color _fillColor, Color _borderColor, int _priority) {
-    fillColor = _fillColor;
+Wireframe::Wireframe(vector<Point> _controlPoint, Point _innerPoint, Color _borderColor, Color _colorFill, int _priority){
+    fillColor = _colorFill;
     borderColor = _borderColor;
     points = _controlPoint;
     priority = _priority;
+    innerPoint = _innerPoint;
     updateEnvelope();
 }
 
