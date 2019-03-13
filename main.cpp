@@ -60,7 +60,7 @@ int main() {
     string inputCommand;
     cout << "filename : ";
     cin >> filename;
-    wireframes = parser.parseFile(filename);
+    wireframes = controller.load(filename);
     drawObjects();
 
     // Setup input mode
@@ -82,33 +82,21 @@ int main() {
     int res = select( fileno( stdin )+1, &set, NULL, NULL, &tv );
     // tcsetattr( fileno( stdin ), TCSANOW, &newSettings ); // change to one key mode
     // Load file
-    string inputCommand;
-    
-    // cout << "filename : ";
-    cin >> filename;
-    wireframes = controller.load(filename);
-
-    // Start drawer thread
-    rc = pthread_create(&threads[0], NULL, drawCanvas, (void *)0);
-    if (rc) {
-        cout << "Error:unable to create thread," << rc << endl;
-        exit(-1);
-    }
 
     // Receive command
     while(1){
         cout << "$";
         cin >> inputCommand;
-        
+
         if(inputCommand == "select"){
             cout << "----list----" << endl;
             for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
                 if (currentWireframe == itr->first){
-                    cout << itr->first << " Selected" << endl;    
+                    cout << itr->first << " Selected" << endl;
                 }else{
                     cout << itr->first << endl;
                 }
-            } 
+            }
             cout << "------------" << endl;
             cin >> currentWireframe;
             cout << currentWireframe <<" Selected" << endl;
