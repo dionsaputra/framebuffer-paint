@@ -22,7 +22,6 @@ using namespace std;
 #include <sys/types.h>
 #include <termios.h>
 
-
 // Global variable
 PaintController controller;
 Drawer drawer;
@@ -31,21 +30,65 @@ string filename;
 
 vector<Point> cornerWindow;
 string currentWireframe;
-
 map<string,Wireframe> wireframes;
 
-int main() {    
-    // Build window
-    Point cornerWindow_1(drawer.vinfo.xres / 4 - 50, 0), cornerWindow_2(drawer.vinfo.xres - 50, 0), cornerWindow_3(drawer.vinfo.xres - 50, drawer.vinfo.yres - 50), cornerWindow_4(drawer.vinfo.xres / 4 - 50, drawer.vinfo.yres - 50);
-    cornerWindow.push_back(cornerWindow_1);
-    cornerWindow.push_back(cornerWindow_2);
-    cornerWindow.push_back(cornerWindow_3);
-    cornerWindow.push_back(cornerWindow_4);    
-    Color green(0,250,0);
-    Wireframe window(cornerWindow, green);
-    drawer.draw_wireframe(window);
+Wireframe window;
+Wireframe horizontalScrollBar;
+Wireframe verticalScrollBar;
+Wireframe statusBar;
 
-    
+Wireframe createRectangle(Point topLeft, Point bottomRight) {
+    vector<Point> points;
+    points.push_back(topLeft); 
+    points.push_back(Point(bottomRight.getX(), topLeft.getY()));
+    points.push_back(bottomRight);
+    points.push_back(Point(topLeft.getX(), bottomRight.getY()));
+
+    Wireframe wireframe;
+    wireframe.setPoints(points);
+    wireframe.updateEnvelope();
+    return wireframe;
+}
+
+void setupWindow() {
+    int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
+    window = createRectangle(Point(50,50), Point(xres-76, yres-176));
+    window.setBorderColor(Color(0,250,0));
+    drawer.draw_wireframe(window);
+}
+
+void setupHorizontalScrollBar() {
+    int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
+    horizontalScrollBar = createRectangle(Point(50,yres-175), Point(xres-50, yres-150));
+    horizontalScrollBar.setBorderColor(Color(0,250,0));
+    drawer.draw_wireframe(horizontalScrollBar);
+}
+
+void setupVerticalScrollBar() {
+    int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
+    verticalScrollBar = createRectangle(Point(xres-75,50), Point(xres-50, yres-176));
+    verticalScrollBar.setBorderColor(Color(0,250,0));
+    drawer.draw_wireframe(verticalScrollBar);
+}
+
+void setupStatusBar() {
+    int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
+    statusBar = createRectangle(Point(50,yres-125), Point(xres-50, yres-25));
+    statusBar.setBorderColor(Color(0,250,0));
+    drawer.draw_wireframe(statusBar);
+}
+
+void setup() {
+    setupWindow();
+    setupHorizontalScrollBar();
+    setupVerticalScrollBar();
+    setupStatusBar();
+}
+
+int main() {    
+
+    setup();
+
     // Build scrollbar
     // Point corner
     
@@ -54,7 +97,7 @@ int main() {
     cout << "filename : ";
     cin >> filename;
     wireframes = controller.load(filename);
-    drawer.draw_canvas(wireframes,window);
+    drawer.draw_canvas(wireframes, window);
 
     // Setup input mode
     struct termios oldSettings, newSettings;

@@ -209,6 +209,7 @@ void Drawer::queueFloodFill(Wireframe wireframe) {
 void Drawer::draw_canvas(map<string,Wireframe> canvas, Wireframe window){
     for (auto itr=canvas.begin(); itr!=canvas.end();itr++){
         draw_wireframe((itr->second).clippingResult(window));
+        cout<<(itr->second).clippingResult(window).getPoints().size()<<endl;
         queueFloodFill((itr->second).clippingResult(window));
     }
 }
