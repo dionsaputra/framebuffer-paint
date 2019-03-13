@@ -26,6 +26,20 @@ Wireframe::Wireframe(vector<Point> _controlPoint, Point _innerPoint, Color _bord
     updateInnerPoint();
 }
 
+Wireframe::Wireframe(int radius, int numPoint, Point centerPoint, Color color) {
+    vector<Point> controlPoint;
+    Point P(centerPoint.getX() + radius, centerPoint.getY());
+    int degree = 360 / numPoint;
+    cout << degree << endl;
+    for(int i = 0; i < numPoint; i++) {
+        P.rotate(centerPoint, degree);
+        controlPoint.push_back(P);
+        controlPoint[i].display();
+    }
+    points = controlPoint;
+    borderColor = color;
+}
+
 void Wireframe::translate(int dx, int dy){
     topLeft.translate(dx,dy);
     bottomRight.translate(dx,dy);
@@ -38,7 +52,7 @@ void Wireframe::translate(int dx, int dy){
 
 void Wireframe::rotate(int degree){
     Point center((bottomRight.getX()+topLeft.getX())/2, (bottomRight.getY()+topLeft.getY())/2);
-    innerPoint.rotate(center,degree);
+    innerPoint.rotate(center, degree);
     for (int i=0; i<points.size(); i++) {
         points[i].rotate(center, degree);
     }
@@ -46,7 +60,7 @@ void Wireframe::rotate(int degree){
 }
 
 void Wireframe::rotate(Point center, int degree){
-    innerPoint.rotate(center,degree);
+    innerPoint.rotate(center, degree);
     for (int i=0; i<points.size(); i++) {
         points[i].rotate(center, degree);
     }
@@ -150,6 +164,13 @@ void Wireframe::setPriority(int _priority) {
     priority = _priority;
 }
 
+bool Wireframe::isInEnvelope(Point point) {
+    int minX = topLeft.getX(), maxX = bottomRight.getX();
+    int minY = topLeft.getY(), maxY = bottomRight.getY();
+
+    return minX <= point.getX() && point.getX() <= maxX && minY <= point.getY() && point.getY() <= maxY;
+}
+
 Wireframe Wireframe::clippingResult(Wireframe window) {
     if (points.size() < 2) {
         return Wireframe();
@@ -249,13 +270,6 @@ bool Wireframe::isInClip(Point point, Wireframe window) {
     int yMin = window.topLeft.getY(), yMax = window.bottomRight.getY();
 
     return xMin <= point.getX() && point.getX() <= xMax && yMin <= point.getY() && point.getY() <= yMax;
-}
-
-bool Wireframe::isInEnvelope(Point point) {
-    int minX = topLeft.getX(), maxX = bottomRight.getX();
-    int minY = topLeft.getY(), maxY = bottomRight.getY();
-
-    return minX <= point.getX() && point.getX() <= maxX && minY <= point.getY() && point.getY() <= maxY;
 }
 
 void Wireframe::updateInnerPoint(){

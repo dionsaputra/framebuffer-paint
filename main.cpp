@@ -15,6 +15,7 @@
 #include "Color.h"
 #include "Parser.h"
 #include "Wireframe.h"
+#include "PaintController.h"
 using namespace std;
 
 #include <stdio.h>
@@ -23,6 +24,7 @@ using namespace std;
 
 
 // Global variable
+PaintController controller;
 Drawer drawer;
 Parser parser;
 string filename;
@@ -42,6 +44,7 @@ int main() {
     Color green(0,250,0);
     Wireframe window(cornerWindow, green);
     drawer.draw_wireframe(window);
+
     
     // Build scrollbar
     // Point corner
@@ -50,12 +53,8 @@ int main() {
     string inputCommand;
     cout << "filename : ";
     cin >> filename;
-    wireframes = parser.parseFile(filename);
+    wireframes = controller.load(filename);
     drawer.draw_canvas(wireframes,window);
-    // for (auto itr=wireframes.begin(); itr!=wireframes.end();itr++){
-    //     drawer.draw_wireframe((itr->second));
-    //     drawer.queueFloodFill((itr->second));
-    // }
 
     // Setup input mode
     struct termios oldSettings, newSettings;
@@ -75,29 +74,30 @@ int main() {
 
     int res = select( fileno( stdin )+1, &set, NULL, NULL, &tv );
     // tcsetattr( fileno( stdin ), TCSANOW, &newSettings ); // change to one key mode
+    // Load file
 
     // Receive command
     while(1){
         cout << "$";
         flush(cout);
         cin >> inputCommand;
-        
+
         if(inputCommand == "select"){
             cout << "----list----" << endl;
             for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
                 if (currentWireframe == itr->first){
-                    cout << itr->first << " Selected" << endl;    
+                    cout << itr->first << " Selected" << endl;
                 }else{
                     cout << itr->first << endl;
                 }
-            } 
+            }
             cout << "------------" << endl;
             cin >> currentWireframe;
             cout << currentWireframe <<" Selected" << endl;
         } else if (inputCommand == "save") {
             cout << "filename: ";
             cin >> filename;
-            parser.save(wireframes,filename);
+            controller.save(wireframes,filename);
             cout << "saved" << endl;
         } else if (inputCommand == "current") {
             cout << currentWireframe << endl;
