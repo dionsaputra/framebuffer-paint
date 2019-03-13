@@ -1,6 +1,6 @@
 COMP = g++
 FLAG = -o
-INPT = main_test.cpp Color.cpp Drawer.cpp Line.cpp Point.cpp Wireframe.cpp Map.cpp Window.cpp
+INPT = main.cpp Color.cpp Drawer.cpp Point.cpp Wireframe.cpp Parser.cpp -lpthread
 OUTP = app
 
 all : program1

@@ -14,11 +14,12 @@ Wireframe::Wireframe(vector<Point> _controlPoint, Point _innerPoint){
     updateEnvelope();
 }
 
-Wireframe::Wireframe(vector<Point> _controlPoint, Color _fillColor, Color _borderColor, int _priority) {
-    fillColor = _fillColor;
+Wireframe::Wireframe(vector<Point> _controlPoint, Point _innerPoint, Color _borderColor, Color _colorFill, int _priority){
+    fillColor = _colorFill;
     borderColor = _borderColor;
     points = _controlPoint;
     priority = _priority;
+    innerPoint = _innerPoint;
     updateEnvelope();
 }
 
@@ -32,10 +33,28 @@ void Wireframe::translate(int dx, int dy){
     }
 }
 
+void Wireframe::rotate(int degree){
+    Point center((bottomRight.getX()+topLeft.getX())/2, (bottomRight.getY()+topLeft.getY())/2);
+    innerPoint.rotate(center,degree);
+    for (int i=0; i<points.size(); i++) {
+        points[i].rotate(center, degree);
+    }
+    updateEnvelope();    
+}
+
 void Wireframe::rotate(Point center, int degree){
     innerPoint.rotate(center,degree);
     for (int i=0; i<points.size(); i++) {
         points[i].rotate(center, degree);
+    }
+    updateEnvelope();
+}
+
+void Wireframe::scale(float skala){
+    Point center((bottomRight.getX()+topLeft.getX())/2, (bottomRight.getY()+topLeft.getY())/2);
+    innerPoint.scale(center,skala);
+    for (int i=0; i<points.size(); i++) {
+        points[i].scale(center, skala);
     }
     updateEnvelope();
 }
@@ -231,4 +250,11 @@ bool Wireframe::isInClip(Point point, Wireframe window) {
     int yMin = window.topLeft.getY(), yMax = window.bottomRight.getY();
 
     return xMin <= point.getX() && point.getX() <= xMax && yMin <= point.getY() && point.getY() <= yMax;
+}
+
+bool Wireframe::isInEnvelope(Point point) {
+    int minX = topLeft.getX(), maxX = bottomRight.getX();
+    int minY = topLeft.getY(), maxY = bottomRight.getY();
+
+    return minX <= point.getX() && point.getX() <= maxX && minY <= point.getY() && point.getY() <= maxY;
 }

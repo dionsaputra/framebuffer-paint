@@ -20,12 +20,14 @@ public:
     Wireframe();
     Wireframe(vector<Point> _controlPoint, Color _borderColor);
     Wireframe(vector<Point> _controlPoint, Point innerPoint);
-    Wireframe(vector<Point> _controlPoint, Color _colorFill, Color _borderColor, int priority);
-    ~Wireframe();
+    Wireframe(vector<Point> _controlPoint, Point _innerPoint, Color _borderColor, Color _colorFill, int _priority);
+    // ~Wireframe();
 
     // Wireframe& operator=(const Wireframe& _wireframe);
 
     void translate(int dx, int dy);
+    void rotate(int degree);
+    void scale(float skala);
     void rotate(Point center, int degree);
     void scale(Point center, float skala);
 
