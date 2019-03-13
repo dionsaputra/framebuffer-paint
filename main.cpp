@@ -22,10 +22,6 @@ using namespace std;
 #include <sys/types.h>
 #include <termios.h>
 
-// thread
-#include <cstdlib>
-#include <pthread.h>
-#define NUM_THREADS 1
 
 // Global variable
 PaintController controller;
@@ -38,22 +34,16 @@ string currentWireframe;
 
 map<string,Wireframe> wireframes;
 
-
-void *drawCanvas(void *threadid){
-    // thread identity
-    long tid;
-    tid = (long)threadid;
-
-    while(1){
-        for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
+void drawObjects(){
+    for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
             // cout << itr->first << endl;
             drawer.draw_wireframe(itr->second);
             drawer.queueFloodFill(itr->second);
-        }
     }
 }
 
 int main() {    
+    // Build window
     Point cornerWindow_1(drawer.vinfo.xres / 4 - 50, 0), cornerWindow_2(drawer.vinfo.xres - 50, 0), cornerWindow_3(drawer.vinfo.xres - 50, drawer.vinfo.yres - 50), cornerWindow_4(drawer.vinfo.xres / 4 - 50, drawer.vinfo.yres - 50);
     cornerWindow.push_back(cornerWindow_1);
     cornerWindow.push_back(cornerWindow_2);
@@ -63,10 +53,16 @@ int main() {
     Wireframe window(cornerWindow, green);
     drawer.draw_wireframe(window);
     
-    // Setup thread
-    pthread_t threads[0];
-    int rc;
+    // Build scrollbar
+    // Point corner
     
+    // Load file
+    string inputCommand;
+    cout << "filename : ";
+    cin >> filename;
+    wireframes = parser.parseFile(filename);
+    drawObjects();
+
     // Setup input mode
     struct termios oldSettings, newSettings;
 
@@ -84,7 +80,6 @@ int main() {
     FD_SET( fileno( stdin ), &set );
 
     int res = select( fileno( stdin )+1, &set, NULL, NULL, &tv );
-
     // tcsetattr( fileno( stdin ), TCSANOW, &newSettings ); // change to one key mode
     // Load file
     string inputCommand;
@@ -171,6 +166,7 @@ int main() {
             }
 
             wireframes.find(currentWireframe)->second.translate(move_x, move_y);
+            drawObjects();
         } else if (inputCommand == "rotate" && currentWireframe != ""){
             int degree;
             cout << "degree: ";
@@ -183,6 +179,7 @@ int main() {
             }
 
             wireframes.find(currentWireframe)->second.rotate(degree);
+            drawObjects();
         } else if (inputCommand == "scale" && currentWireframe != "") {
             int scale;
             cout << "scale: ";
@@ -195,6 +192,7 @@ int main() {
             }
 
             wireframes.find(currentWireframe)->second.scale(scale);
+            drawObjects();
         } else {
             cout << "Please enter a valid command" << endl;
         }
