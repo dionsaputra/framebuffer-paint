@@ -52,6 +52,7 @@ public:
     void setPriority(int _priority);
 
     bool isInEnvelope(Point point);
+    void updateInnerPoint();
 
     Wireframe clippingResult(Wireframe window);
     bool isInClip(Point point, Wireframe window);

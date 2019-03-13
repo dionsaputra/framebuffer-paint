@@ -6,12 +6,14 @@ Wireframe::Wireframe(vector<Point> _controlPoint, Color _borderColor) {
     points = _controlPoint;
     borderColor = _borderColor;
     updateEnvelope();
+    updateInnerPoint();
 }
 
 Wireframe::Wireframe(vector<Point> _controlPoint, Point _innerPoint){
     points = _controlPoint;
     innerPoint = _innerPoint;
     updateEnvelope();
+    updateInnerPoint();
 }
 
 Wireframe::Wireframe(vector<Point> _controlPoint, Point _innerPoint, Color _borderColor, Color _colorFill, int _priority){
@@ -21,6 +23,7 @@ Wireframe::Wireframe(vector<Point> _controlPoint, Point _innerPoint, Color _bord
     priority = _priority;
     innerPoint = _innerPoint;
     updateEnvelope();
+    updateInnerPoint();
 }
 
 void Wireframe::translate(int dx, int dy){
@@ -153,9 +156,10 @@ Wireframe Wireframe::clippingResult(Wireframe window) {
     }
     
     vector<Point> clippingPoints;
-    for (int i=1; i<points.size(); i++) {
-        Point previous = points[i-1];
-        Point current = points[i];
+    int pointsSize = points.size();
+    for (int i=1; i<=pointsSize; i++) {
+        Point previous = points[(i-1)%pointsSize];
+        Point current = points[i%pointsSize];
 
         if (isInClip(previous, window) && isInClip(current, window)) {
             clippingPoints.push_back(current);
@@ -171,6 +175,7 @@ Wireframe Wireframe::clippingResult(Wireframe window) {
         return Wireframe();
     } else {
         Wireframe wireframe(clippingPoints, innerPoint);
+        cout << clippingPoints.size();
         wireframe.setBorderColor(borderColor);
         wireframe.setFillColor(fillColor);
         wireframe.setPriority(priority);
@@ -250,4 +255,13 @@ bool Wireframe::isInEnvelope(Point point) {
     int minY = topLeft.getY(), maxY = bottomRight.getY();
 
     return minX <= point.getX() && point.getX() <= maxX && minY <= point.getY() && point.getY() <= maxY;
+}
+
+void Wireframe::updateInnerPoint(){
+    int innerPointX = 0,innerPointY = 0;
+    for (int i=0; i<points.size(); i++){
+       innerPointX += points[i].getX();
+       innerPointY += points[i].getY();  
+    }
+    innerPoint = Point(innerPointX/points.size(),innerPointY/points.size());
 }

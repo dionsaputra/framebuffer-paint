@@ -84,6 +84,7 @@ void Drawer::draw_wireframe(Wireframe wireframe) {
         }else{
             draw = bressenham(wireframe.getPoints()[i], wireframe.getPoints()[i+1]);
         }
+        draw_point(wireframe.getPoints()[i],wireframe.getBorderColor());
         for(int j=0; j<draw.size();j++){
             draw_point(draw[j],wireframe.getBorderColor());
         }
@@ -127,6 +128,7 @@ void Drawer::queueFloodFill(Wireframe wireframe) {
         nextPoint = pointQueue.front();
         pointQueue.pop();
 
+        for (int i=0; i<100000; i++);
         Point left = nextPoint.getLeft();
         Point right = nextPoint.getRight();
         Point top = nextPoint.getTop();
