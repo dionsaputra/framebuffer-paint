@@ -35,7 +35,7 @@ void Wireframe::translate(int dx, int dy){
 
 void Wireframe::rotate(int degree){
     Point center((bottomRight.getX()+topLeft.getX())/2, (bottomRight.getY()+topLeft.getY())/2);
-    innerPoint.rotate(center,degree);
+    innerPoint.rotate(center, degree);
     for (int i=0; i<points.size(); i++) {
         points[i].rotate(center, degree);
     }
@@ -43,7 +43,7 @@ void Wireframe::rotate(int degree){
 }
 
 void Wireframe::rotate(Point center, int degree){
-    innerPoint.rotate(center,degree);
+    innerPoint.rotate(center, degree);
     for (int i=0; i<points.size(); i++) {
         points[i].rotate(center, degree);
     }
@@ -250,11 +250,4 @@ bool Wireframe::isInClip(Point point, Wireframe window) {
     int yMin = window.topLeft.getY(), yMax = window.bottomRight.getY();
 
     return xMin <= point.getX() && point.getX() <= xMax && yMin <= point.getY() && point.getY() <= yMax;
-}
-
-bool Wireframe::isInEnvelope(Point point) {
-    int minX = topLeft.getX(), maxX = bottomRight.getX();
-    int minY = topLeft.getY(), maxY = bottomRight.getY();
-
-    return minX <= point.getX() && point.getX() <= maxX && minY <= point.getY() && point.getY() <= maxY;
 }

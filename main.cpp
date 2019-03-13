@@ -15,6 +15,7 @@
 #include "Color.h"
 #include "Parser.h"
 #include "Wireframe.h"
+#include "PaintController.h"
 using namespace std;
 
 #include <stdio.h>
@@ -27,6 +28,7 @@ using namespace std;
 #define NUM_THREADS 1
 
 // Global variable
+PaintController controller;
 Drawer drawer;
 Parser parser;
 string filename;
@@ -89,7 +91,7 @@ int main() {
     
     // cout << "filename : ";
     cin >> filename;
-    wireframes = parser.parseFile(filename);
+    wireframes = controller.load(filename);
 
     // Start drawer thread
     rc = pthread_create(&threads[0], NULL, drawCanvas, (void *)0);
@@ -118,13 +120,13 @@ int main() {
         } else if (inputCommand == "save") {
             cout << "filename: ";
             cin >> filename;
-            parser.save(wireframes,filename);
+            controller.save(wireframes,filename);
             cout << "saved" << endl;
         } else if (inputCommand == "current") {
             cout << currentWireframe << endl;
         } else if(inputCommand == "scroll"){
             tcsetattr( fileno( stdin ), TCSANOW, &newSettings );
-            cout << "Use WASD to navigate" << end;
+            cout << "Use WASD to navigate" << endl;
             cout << "Enter 'i' to exit from scroll mode" << endl;
             while (1){
                 if( res > 0 ){
