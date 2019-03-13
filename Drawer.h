@@ -16,6 +16,7 @@
 #include <string.h>
 #include <termios.h>
 #include <sys/types.h>
+#include <map>
 
 #include "Point.h"
 #include "Color.h"
@@ -65,6 +66,10 @@ public:
     void unfill_wireframe(Wireframe wireframe);
 
     void queueFloodFill(Wireframe wireframe);
+
+    void draw_canvas(map<string,Wireframe> canvas, Wireframe window);
+
+    void erase_canvas(map<string,Wireframe> canvas);
 };
 
 #endif

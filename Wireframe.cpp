@@ -6,12 +6,14 @@ Wireframe::Wireframe(vector<Point> _controlPoint, Color _borderColor) {
     points = _controlPoint;
     borderColor = _borderColor;
     updateEnvelope();
+    updateInnerPoint();
 }
 
 Wireframe::Wireframe(vector<Point> _controlPoint, Point _innerPoint){
     points = _controlPoint;
     innerPoint = _innerPoint;
     updateEnvelope();
+    updateInnerPoint();
 }
 
 Wireframe::Wireframe(vector<Point> _controlPoint, Point _innerPoint, Color _borderColor, Color _colorFill, int _priority){
@@ -21,6 +23,21 @@ Wireframe::Wireframe(vector<Point> _controlPoint, Point _innerPoint, Color _bord
     priority = _priority;
     innerPoint = _innerPoint;
     updateEnvelope();
+    updateInnerPoint();
+}
+
+Wireframe::Wireframe(int radius, int numPoint, Point centerPoint, Color color) {
+    vector<Point> controlPoint;
+    Point P(centerPoint.getX() + radius, centerPoint.getY());
+    int degree = 360 / numPoint;
+    cout << degree << endl;
+    for(int i = 0; i < numPoint; i++) {
+        P.rotate(centerPoint, degree);
+        controlPoint.push_back(P);
+        controlPoint[i].display();
+    }
+    points = controlPoint;
+    borderColor = color;
 }
 
 void Wireframe::translate(int dx, int dy){
@@ -160,9 +177,10 @@ Wireframe Wireframe::clippingResult(Wireframe window) {
     }
     
     vector<Point> clippingPoints;
-    for (int i=1; i<points.size(); i++) {
-        Point previous = points[i-1];
-        Point current = points[i];
+    int pointsSize = points.size();
+    for (int i=1; i<=pointsSize; i++) {
+        Point previous = points[(i-1)%pointsSize];
+        Point current = points[i%pointsSize];
 
         if (isInClip(previous, window) && isInClip(current, window)) {
             clippingPoints.push_back(current);
@@ -178,6 +196,7 @@ Wireframe Wireframe::clippingResult(Wireframe window) {
         return Wireframe();
     } else {
         Wireframe wireframe(clippingPoints, innerPoint);
+        // cout << clippingPoints.size();
         wireframe.setBorderColor(borderColor);
         wireframe.setFillColor(fillColor);
         wireframe.setPriority(priority);
@@ -196,47 +215,48 @@ Point Wireframe::intersect(Point inside, Point outside, Wireframe window) {
 
     if (xOut <= xMin) {
         if (yOut <= yMin) { // case 0
-            int xSearch = (yMin - yOut) * (dx/dy) + xOut;
-            int ySearch = (xMin - xOut) * (dy/dx) + yOut;
+            int xSearch = (yMin - yOut) * dx / dy + xOut;
+            int ySearch = (xMin - xOut) * dy / dx + yOut;
 
             if (xSearch < xMin) return Point(xMin, ySearch);
             return Point(xSearch, yMin);            
 
         } else if (yOut >= yMax) {  // case 6
-            int xSearch = (yMax - yOut) * (dx/dy) + xOut;
-            int ySearch = (xMin - xOut) * (dy/dx) + yOut;
+            int xSearch = (yMax - yOut) * dx/dy + xOut;
+            int ySearch = (xMin - xOut) * dy/dx + yOut;
 
             if (xSearch < xMin) return Point(xMin, ySearch);
             return Point(xSearch, yMax);            
 
         } else {    // case 3
-            int ySearch = (xMin - xOut) * (dy/dx) + yOut;
+            int ySearch = (xMin - xOut) * dy/dx + yOut;
             return Point(xMin, ySearch);
         }
     } else if (xOut >= xMax) {
         if (yOut <= yMin) { // case 2
-            int xSearch = (yMin - yOut) * (dx/dy) + xOut;
-            int ySearch = (xMax - xOut) * (dy/dx) + yOut;
+            int xSearch = (yMin - yOut) * dx/dy + xOut;
+            int ySearch = (xMax - xOut) * dy/dx + yOut;
 
             if (xSearch < xMax) return Point(xMax, ySearch);
             return Point(xSearch, yMin);            
         } else if (yOut >= yMax) {  // case 8
-            int xSearch = (yMax - yOut) * (dx/dy) + xOut;
-            int ySearch = (xMax - xOut) * (dy/dx) + yOut;
+            int xSearch = (yMax - yOut) * dx/dy + xOut;
+            int ySearch = (xMax - xOut) * dy/dx + yOut;
 
             if (xSearch < xMax) return Point(xMax, ySearch);
             return Point(xSearch, yMax);            
 
         } else {    // case 5
-            int ySearch = (xMax - xOut) * (dy/dx) + yOut;
+            int ySearch = (xMax - xOut) * dy /dx + yOut;
+            // cout << ySearch << endl;
             return Point(xMax, ySearch);
         }
     } else {
         if (yOut <= yMin) { // case 1
-            int xSearch = (yMin - yOut) * (dx/dy) + xOut;
+            int xSearch = (yMin - yOut) * dx/dy + xOut;
             return Point(xSearch, yMin);
         } else if (yOut >= yMax) {  // case 7
-            int xSearch = (yMax - yOut) * (dx/dy) + xOut;
+            int xSearch = (yMax - yOut) * dx/dy + xOut;
             return Point(xSearch, yMax);
         } else {    // case 7
             // DO NOTHING
@@ -250,4 +270,13 @@ bool Wireframe::isInClip(Point point, Wireframe window) {
     int yMin = window.topLeft.getY(), yMax = window.bottomRight.getY();
 
     return xMin <= point.getX() && point.getX() <= xMax && yMin <= point.getY() && point.getY() <= yMax;
+}
+
+void Wireframe::updateInnerPoint(){
+    int innerPointX = 0,innerPointY = 0;
+    for (int i=0; i<points.size(); i++){
+       innerPointX += points[i].getX();
+       innerPointY += points[i].getY();  
+    }
+    innerPoint = Point(innerPointX/points.size(),innerPointY/points.size());
 }

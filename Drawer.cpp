@@ -61,9 +61,8 @@ void Drawer::draw_point(Point point, Color color) {
 }
 
 void Drawer::drawLine(Point start, Point end, Color color) {
-
-    vector<Point> points;
     int x1,x2,y1,y2;
+    draw_point(start,color);
 
     if (abs(end.getX()-start.getX()) >= abs(end.getY()-start.getY())){
     	if (start.getX() <= end.getX()){
@@ -174,6 +173,7 @@ void Drawer::queueFloodFill(Wireframe wireframe) {
         nextPoint = pointQueue.front();
         pointQueue.pop();
 
+        // for (int i=0; i<100000; i++);
         Point left = nextPoint.getLeft();
         Point right = nextPoint.getRight();
         Point top = nextPoint.getTop();
@@ -206,4 +206,16 @@ void Drawer::queueFloodFill(Wireframe wireframe) {
     }
 }
 
+void Drawer::draw_canvas(map<string,Wireframe> canvas, Wireframe window){
+    for (auto itr=canvas.begin(); itr!=canvas.end();itr++){
+        draw_wireframe((itr->second).clippingResult(window));
+        queueFloodFill((itr->second).clippingResult(window));
+    }
+}
 
+void Drawer::erase_canvas(map<string,Wireframe> canvas){
+    for (auto itr=canvas.begin(); itr!=canvas.end();itr++){
+        erase_wireframe(itr->second);
+        unfill_wireframe(itr->second);
+    } 
+}

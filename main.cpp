@@ -34,14 +34,6 @@ string currentWireframe;
 
 map<string,Wireframe> wireframes;
 
-void drawObjects(){
-    for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
-            // cout << itr->first << endl;
-            drawer.draw_wireframe(itr->second);
-            drawer.queueFloodFill(itr->second);
-    }
-}
-
 int main() {    
     // Build window
     Point cornerWindow_1(drawer.vinfo.xres / 4 - 50, 0), cornerWindow_2(drawer.vinfo.xres - 50, 0), cornerWindow_3(drawer.vinfo.xres - 50, drawer.vinfo.yres - 50), cornerWindow_4(drawer.vinfo.xres / 4 - 50, drawer.vinfo.yres - 50);
@@ -52,6 +44,7 @@ int main() {
     Color green(0,250,0);
     Wireframe window(cornerWindow, green);
     drawer.draw_wireframe(window);
+
     
     // Build scrollbar
     // Point corner
@@ -61,7 +54,7 @@ int main() {
     cout << "filename : ";
     cin >> filename;
     wireframes = controller.load(filename);
-    drawObjects();
+    drawer.draw_canvas(wireframes,window);
 
     // Setup input mode
     struct termios oldSettings, newSettings;
@@ -87,6 +80,7 @@ int main() {
     // Receive command
     while(1){
         cout << "$";
+        flush(cout);
         cin >> inputCommand;
 
         if(inputCommand == "select"){
@@ -148,40 +142,29 @@ int main() {
             cout << "x y: ";
             cin >> move_x >> move_y;
             
-            for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
-                // cout << itr->first << endl;
-                drawer.erase_wireframe(itr->second);
-                drawer.unfill_wireframe(itr->second);
-            }
+            drawer.erase_canvas(wireframes);
 
             wireframes.find(currentWireframe)->second.translate(move_x, move_y);
-            drawObjects();
+            drawer.draw_canvas(wireframes,window);
+
         } else if (inputCommand == "rotate" && currentWireframe != ""){
             int degree;
             cout << "degree: ";
             cin >> degree;
 
-            for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
-                // cout << itr->first << endl;
-                drawer.erase_wireframe(itr->second);
-                drawer.unfill_wireframe(itr->second);
-            }
+            drawer.erase_canvas(wireframes);
 
             wireframes.find(currentWireframe)->second.rotate(degree);
-            drawObjects();
+            drawer.draw_canvas(wireframes,window);
         } else if (inputCommand == "scale" && currentWireframe != "") {
             int scale;
             cout << "scale: ";
             cin >> scale;
             
-            for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
-                // cout << itr->first << endl;
-                drawer.erase_wireframe(itr->second);
-                drawer.unfill_wireframe(itr->second);
-            }
+            drawer.erase_canvas(wireframes);
 
             wireframes.find(currentWireframe)->second.scale(scale);
-            drawObjects();
+            drawer.draw_canvas(wireframes,window);
         } else {
             cout << "Please enter a valid command" << endl;
         }

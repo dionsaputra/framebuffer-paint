@@ -21,6 +21,7 @@ public:
     Wireframe(vector<Point> _controlPoint, Color _borderColor);
     Wireframe(vector<Point> _controlPoint, Point innerPoint);
     Wireframe(vector<Point> _controlPoint, Point _innerPoint, Color _borderColor, Color _colorFill, int _priority);
+    Wireframe(int radius, int numPoint, Point centerPoint, Color color);
     // ~Wireframe();
 
     // Wireframe& operator=(const Wireframe& _wireframe);
@@ -52,6 +53,7 @@ public:
     void setPriority(int _priority);
 
     bool isInEnvelope(Point point);
+    void updateInnerPoint();
 
     Wireframe clippingResult(Wireframe window);
     bool isInClip(Point point, Wireframe window);
