@@ -221,3 +221,17 @@ vector<Point> bressenham(Point start, Point end) {
     
     return points;
 }
+
+void Drawer::draw_canvas(map<string,Wireframe> canvas, Wireframe window){
+    for (auto itr=canvas.begin(); itr!=canvas.end();itr++){
+        draw_wireframe((itr->second).clippingResult(window));
+        queueFloodFill((itr->second).clippingResult(window));
+    }
+}
+
+void Drawer::erase_canvas(map<string,Wireframe> canvas){
+    for (auto itr=canvas.begin(); itr!=canvas.end();itr++){
+        erase_wireframe(itr->second);
+        unfill_wireframe(itr->second);
+    } 
+}

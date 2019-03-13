@@ -41,13 +41,9 @@ void *drawCanvas(void *threadid){
     // thread identity
     long tid;
     tid = (long)threadid;
+     
+    drawer.draw_canvas(wireframes,window);
 
-    while(1){
-        for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
-            // cout << itr->first << endl;
-            drawer.draw_wireframe(itr->second);
-            drawer.queueFloodFill(itr->second);
-        }
     }
 }
 
