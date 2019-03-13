@@ -79,6 +79,7 @@ int main() {
     // Receive command
     while(1){
         cout << "$";
+        flush(cout);
         cin >> inputCommand;
         
         if(inputCommand == "select"){

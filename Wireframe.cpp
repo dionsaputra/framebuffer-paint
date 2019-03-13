@@ -175,7 +175,7 @@ Wireframe Wireframe::clippingResult(Wireframe window) {
         return Wireframe();
     } else {
         Wireframe wireframe(clippingPoints, innerPoint);
-        cout << clippingPoints.size();
+        // cout << clippingPoints.size();
         wireframe.setBorderColor(borderColor);
         wireframe.setFillColor(fillColor);
         wireframe.setPriority(priority);
@@ -194,47 +194,48 @@ Point Wireframe::intersect(Point inside, Point outside, Wireframe window) {
 
     if (xOut <= xMin) {
         if (yOut <= yMin) { // case 0
-            int xSearch = (yMin - yOut) * (dx/dy) + xOut;
-            int ySearch = (xMin - xOut) * (dy/dx) + yOut;
+            int xSearch = (yMin - yOut) * dx / dy + xOut;
+            int ySearch = (xMin - xOut) * dy / dx + yOut;
 
             if (xSearch < xMin) return Point(xMin, ySearch);
             return Point(xSearch, yMin);            
 
         } else if (yOut >= yMax) {  // case 6
-            int xSearch = (yMax - yOut) * (dx/dy) + xOut;
-            int ySearch = (xMin - xOut) * (dy/dx) + yOut;
+            int xSearch = (yMax - yOut) * dx/dy + xOut;
+            int ySearch = (xMin - xOut) * dy/dx + yOut;
 
             if (xSearch < xMin) return Point(xMin, ySearch);
             return Point(xSearch, yMax);            
 
         } else {    // case 3
-            int ySearch = (xMin - xOut) * (dy/dx) + yOut;
+            int ySearch = (xMin - xOut) * dy/dx + yOut;
             return Point(xMin, ySearch);
         }
     } else if (xOut >= xMax) {
         if (yOut <= yMin) { // case 2
-            int xSearch = (yMin - yOut) * (dx/dy) + xOut;
-            int ySearch = (xMax - xOut) * (dy/dx) + yOut;
+            int xSearch = (yMin - yOut) * dx/dy + xOut;
+            int ySearch = (xMax - xOut) * dy/dx + yOut;
 
             if (xSearch < xMax) return Point(xMax, ySearch);
             return Point(xSearch, yMin);            
         } else if (yOut >= yMax) {  // case 8
-            int xSearch = (yMax - yOut) * (dx/dy) + xOut;
-            int ySearch = (xMax - xOut) * (dy/dx) + yOut;
+            int xSearch = (yMax - yOut) * dx/dy + xOut;
+            int ySearch = (xMax - xOut) * dy/dx + yOut;
 
             if (xSearch < xMax) return Point(xMax, ySearch);
             return Point(xSearch, yMax);            
 
         } else {    // case 5
-            int ySearch = (xMax - xOut) * (dy/dx) + yOut;
+            int ySearch = (xMax - xOut) * dy /dx + yOut;
+            // cout << ySearch << endl;
             return Point(xMax, ySearch);
         }
     } else {
         if (yOut <= yMin) { // case 1
-            int xSearch = (yMin - yOut) * (dx/dy) + xOut;
+            int xSearch = (yMin - yOut) * dx/dy + xOut;
             return Point(xSearch, yMin);
         } else if (yOut >= yMax) {  // case 7
-            int xSearch = (yMax - yOut) * (dx/dy) + xOut;
+            int xSearch = (yMax - yOut) * dx/dy + xOut;
             return Point(xSearch, yMax);
         } else {    // case 7
             // DO NOTHING

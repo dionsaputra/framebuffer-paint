@@ -128,7 +128,7 @@ void Drawer::queueFloodFill(Wireframe wireframe) {
         nextPoint = pointQueue.front();
         pointQueue.pop();
 
-        for (int i=0; i<100000; i++);
+        // for (int i=0; i<100000; i++);
         Point left = nextPoint.getLeft();
         Point right = nextPoint.getRight();
         Point top = nextPoint.getTop();
