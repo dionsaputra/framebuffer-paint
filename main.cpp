@@ -37,11 +37,34 @@ string currentWireframe;
 map<string,Wireframe> wireframes;
 
 
-void *keyListener(void *threadid){
+void *drawCanvas(void *threadid){
     // thread identity
     long tid;
     tid = (long)threadid;
 
+    while(1){
+        for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
+            // cout << itr->first << endl;
+            drawer.draw_wireframe(itr->second);
+            drawer.queueFloodFill(itr->second);
+        }
+    }
+}
+
+int main() {    
+    Point cornerWindow_1(drawer.vinfo.xres / 4 - 50, 0), cornerWindow_2(drawer.vinfo.xres - 50, 0), cornerWindow_3(drawer.vinfo.xres - 50, drawer.vinfo.yres - 50), cornerWindow_4(drawer.vinfo.xres / 4 - 50, drawer.vinfo.yres - 50);
+    cornerWindow.push_back(cornerWindow_1);
+    cornerWindow.push_back(cornerWindow_2);
+    cornerWindow.push_back(cornerWindow_3);
+    cornerWindow.push_back(cornerWindow_4);    
+    Color green(0,250,0);
+    Wireframe window(cornerWindow, green);
+    drawer.draw_wireframe(window);
+    
+    // Setup thread
+    pthread_t threads[0];
+    int rc;
+    
     // Setup input mode
     struct termios oldSettings, newSettings;
 
@@ -64,8 +87,16 @@ void *keyListener(void *threadid){
     // Load file
     string inputCommand;
     
+    // cout << "filename : ";
     cin >> filename;
     wireframes = parser.parseFile(filename);
+
+    // Start drawer thread
+    rc = pthread_create(&threads[0], NULL, drawCanvas, (void *)0);
+    if (rc) {
+        cout << "Error:unable to create thread," << rc << endl;
+        exit(-1);
+    }
 
     // Receive command
     while(1){
@@ -93,12 +124,22 @@ void *keyListener(void *threadid){
             cout << currentWireframe << endl;
         } else if(inputCommand == "scroll"){
             tcsetattr( fileno( stdin ), TCSANOW, &newSettings );
-            while ( 1 ){
+            cout << "Use WASD to navigate" << end;
+            cout << "Enter 'i' to exit from scroll mode" << endl;
+            while (1){
                 if( res > 0 ){
                     char c;
                     read( fileno( stdin ), &c, 1 );
-                    printf( "Input available %c %d\n",c,c);
-                    if(c=='i'){
+                    // printf( "Input available %c %d\n",c,c);
+                    if (c == 'w'){
+                        // Scroll up
+                    } else if (c == 'a'){
+                        // Scroll left
+                    } else if (c == 's'){
+                        // Scroll down
+                    } else if (c == 'd'){
+                        // Scroll right
+                    } else if(c=='i'){
                         // Change settings
                         tcsetattr( fileno( stdin ), TCSANOW, &oldSettings );    
                         break;
@@ -158,35 +199,5 @@ void *keyListener(void *threadid){
     }
 
     tcsetattr( fileno( stdin ), TCSANOW, &oldSettings );
-    return 0;
-}
-
-int main() {    
-    Point cornerWindow_1(drawer.vinfo.xres / 4 - 50, 0), cornerWindow_2(drawer.vinfo.xres - 50, 0), cornerWindow_3(drawer.vinfo.xres - 50, drawer.vinfo.yres - 50), cornerWindow_4(drawer.vinfo.xres / 4 - 50, drawer.vinfo.yres - 50);
-    cornerWindow.push_back(cornerWindow_1);
-    cornerWindow.push_back(cornerWindow_2);
-    cornerWindow.push_back(cornerWindow_3);
-    cornerWindow.push_back(cornerWindow_4);    
-    Color green(0,250,0);
-    Wireframe window(cornerWindow, green);
-    drawer.draw_wireframe(window);
-    
-    // Start key listener 
-    pthread_t threads[0];
-    int rc;
-    
-    rc = pthread_create(&threads[0], NULL, keyListener, (void *)0);
-    if (rc) {
-        cout << "Error:unable to create thread," << rc << endl;
-        exit(-1);
-    }
-
-    while(1){
-        for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
-            // cout << itr->first << endl;
-            drawer.draw_wireframe(itr->second);
-            drawer.queueFloodFill(itr->second);
-        }
-    }
     
 }
