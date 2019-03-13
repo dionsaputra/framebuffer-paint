@@ -83,6 +83,7 @@ int main() {
     // tcsetattr( fileno( stdin ), TCSANOW, &newSettings ); // change to one key mode
     // Load file
 
+
     // Receive command
     while(1){
         cout << "$";
