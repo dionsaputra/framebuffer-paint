@@ -14,11 +14,7 @@ using namespace std;
 class Parser {
 
 public:
-    
-    map<string,Wireframe> parseFile(string fileName);
     vector<string> split(string str, string sep);
-    void save(map<string,Wireframe> map, string filename);
-
 };
 
 #endif

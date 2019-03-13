@@ -60,6 +60,67 @@ void Drawer::draw_point(Point point, Color color) {
     }
 }
 
+void Drawer::drawLine(Point start, Point end, Color color) {
+
+    vector<Point> points;
+    int x1,x2,y1,y2;
+
+    if (abs(end.getX()-start.getX()) >= abs(end.getY()-start.getY())){
+    	if (start.getX() <= end.getX()){
+    		x1=start.getX();
+	    	x2=end.getX();
+	    	y1=start.getY();
+	    	y2=end.getY();
+    	}else{
+    		x1=end.getX();
+    		x2=start.getX();
+    		y1=end.getY();
+    		y2=start.getY();
+    	}
+    }else{
+    	if (start.getY() <= end.getY()){
+    		x1=start.getY();
+    		x2=end.getY();
+    		y1=start.getX();
+    		y2=end.getX();
+    	}else{
+    		x1=end.getY();
+    		x2=start.getY();
+    		y1=end.getX();
+    		y2=start.getX();
+    	}
+    }
+
+    int dx = x2-x1;
+    int dy = y2-y1;
+    int turun = 1;
+
+    if (y2 < y1){
+        dy = y1 - y2;
+        turun = 0;
+    }
+
+    int D = 2*dy - dx;
+
+    for(int x = x1+1, y = y1; x < x2; x++){
+        
+        if (D > 0){
+            if (turun){
+                y++;
+            }else{
+                y--;
+            }
+            D -= 2*dx;
+        }
+        D += 2*dy;
+        if (abs(end.getX()-start.getX()) >= abs(end.getY()-start.getY())){
+            draw_point(Point(x,y), color);
+        } else{
+            draw_point(Point(y,x), color);
+        }
+    } 
+}
+
 Color Drawer::getColor(Point point) {
     if (is_in_frame(point)) {
         Color color;
@@ -77,30 +138,16 @@ void Drawer::erase_point(Point point) {
 }
 
 void Drawer::draw_wireframe(Wireframe wireframe) {
-    vector<Point> draw; 
-    for (int i=0; i<wireframe.getPoints().size(); i++) {
-        if (i == wireframe.getPoints().size() - 1){ 
-            draw = bressenham(wireframe.getPoints()[i], wireframe.getPoints()[0]);
-        }else{
-            draw = bressenham(wireframe.getPoints()[i], wireframe.getPoints()[i+1]);
-        }
-        for(int j=0; j<draw.size();j++){
-            draw_point(draw[j],wireframe.getBorderColor());
-        }
+    int pointsSize = wireframe.getPoints().size();
+    for (int i=1; i<=pointsSize; i++) {
+        drawLine(wireframe.getPoints()[(i-1)%pointsSize], wireframe.getPoints()[i%pointsSize], wireframe.getBorderColor()); 
     }
 }
 
 void Drawer::erase_wireframe(Wireframe wireframe) {
-    vector<Point> draw; 
-    for (int i=0; i<wireframe.getPoints().size(); i++) {
-        if (i == wireframe.getPoints().size() - 1){ 
-            draw = bressenham(wireframe.getPoints()[i], wireframe.getPoints()[0]);
-        }else{
-            draw = bressenham(wireframe.getPoints()[i], wireframe.getPoints()[i+1]);
-        }
-        for(int j=0; j<draw.size();j++){
-            draw_point(draw[j],Color::background());
-        }
+    int pointsSize = wireframe.getPoints().size();
+    for (int i=1; i<=pointsSize; i++) {
+        drawLine(wireframe.getPoints()[(i-1)%pointsSize], wireframe.getPoints()[i%pointsSize], Color::background()); 
     }
 }
 
@@ -159,65 +206,4 @@ void Drawer::queueFloodFill(Wireframe wireframe) {
     }
 }
 
-vector<Point> bressenham(Point start, Point end) {
-    
-    vector<Point> points;
-    int x1,x2,y1,y2;
 
-    if (abs(end.getX()-start.getX()) >= abs(end.getY()-start.getY())){
-    	if (start.getX() <= end.getX()){
-    		x1=start.getX();
-	    	x2=end.getX();
-	    	y1=start.getY();
-	    	y2=end.getY();
-    	}else{
-    		x1=end.getX();
-    		x2=start.getX();
-    		y1=end.getY();
-    		y2=start.getY();
-    	}
-    }else{
-    	if (start.getY() <= end.getY()){
-    		x1=start.getY();
-    		x2=end.getY();
-    		y1=start.getX();
-    		y2=end.getX();
-    	}else{
-    		x1=end.getY();
-    		x2=start.getY();
-    		y1=end.getX();
-    		y2=start.getX();
-    	}
-    }
-
-    int dx = x2-x1;
-    int dy = y2-y1;
-    int turun = 1;
-
-    if (y2 < y1){
-        dy = y1 - y2;
-        turun = 0;
-    }
-
-    int D = 2*dy - dx;
-
-    for(int x = x1+1, y = y1; x < x2; x++){
-        
-        if (D > 0){
-            if (turun){
-                y++;
-            }else{
-                y--;
-            }
-            D -= 2*dx;
-        }
-        D += 2*dy;
-        if (abs(end.getX()-start.getX()) >= abs(end.getY()-start.getY())){
-            points.push_back(Point(x,y));
-        } else{
-            points.push_back(Point(y,x));
-        }
-    } 
-    
-    return points;
-}

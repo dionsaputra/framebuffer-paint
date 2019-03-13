@@ -47,7 +47,9 @@ public:
     
     /*** Draw point in screen by putting color pixel in framebuffer ***/
     void draw_point(Point point, Color color);
-    
+
+    void drawLine(Point start, Point end, Color color);
+        
     /*** Return the color of point in screen by reading framebuffer or background color if its outside screen ***/
     Color getColor(Point point);
     
