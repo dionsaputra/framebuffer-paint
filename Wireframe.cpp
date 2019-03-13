@@ -23,6 +23,20 @@ Wireframe::Wireframe(vector<Point> _controlPoint, Point _innerPoint, Color _bord
     updateEnvelope();
 }
 
+Wireframe::Wireframe(int radius, int numPoint, Point centerPoint, Color color) {
+    vector<Point> controlPoint;
+    Point P(centerPoint.getX() + radius, centerPoint.getY());
+    int degree = 360 / numPoint;
+    cout << degree << endl;
+    for(int i = 0; i < numPoint; i++) {
+        P.rotate(centerPoint, degree);
+        controlPoint.push_back(P);
+        controlPoint[i].display();
+    }
+    points = controlPoint;
+    borderColor = color;
+}
+
 void Wireframe::translate(int dx, int dy){
     topLeft.translate(dx,dy);
     bottomRight.translate(dx,dy);

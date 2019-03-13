@@ -50,6 +50,10 @@ int main() {
     Color green(0,250,0);
     Wireframe window(cornerWindow, green);
     drawer.draw_wireframe(window);
+
+    Point centerPoint(600,600);
+    Wireframe polygon(50, 3, centerPoint, green);
+    drawer.draw_wireframe(polygon);
     
     // Build scrollbar
     // Point corner
