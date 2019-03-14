@@ -1,40 +1,77 @@
-#include "letter.h"
+#include "Letter.h"
 
 Letter::Letter(){}
-Letter::~Letter();
+Letter::~Letter(){};
 
-Letter::Letter(char c, Drawer drawer, Point point, int scale, Color color) {
-    long int loc = 0;
-    int x,y;
-    for (y = point.y; y < limit_y(scale, point.y); y++) {
-        for (x = point.x; x < limit_x(scale, point.x); x++) {
-            if (check_pos(drawer.vinfo, x, y) && condition(c, x, y, scale, point.x, point.y)) {
-                Drawer::draw_point(point, color);
-            }
-        }
-    }
+Letter::Letter(char c, Point startPoint, int scale, Color color) {
+    // long int loc = 0;
+    // int x,y;
+    // for (y = point.y; y < limit_y(scale, point.y); y++) {
+    //     for (x = point.x; x < limit_x(scale, point.x); x++) {
+    //         if (check_pos(drawer.vinfo, x, y) && condition(c, x, y, scale, point.x, point.y)) {
+    //             Drawer::draw_point(point, color);
+    //         }
+    //     }
+    // }
+    this->character = c;
+    this->startPoint = startPoint;
+    this->scale = scale;
+    this->color = color;
 }
 
-void Letter::word(char* word, int len, Drawer drawer, Point point, int shift, int scale, Color color) {
-    int i;
-    for (i=0; i<len; i++) {
-        if(!isspace(word[i])){
-            letter(word[i], drawer, point, scale, color);
-        }
-        point.x += shift;
-    }
+void Letter::printInfo() {
+    cout << getCharacter() << endl;
+    startPoint.display();
+    cout << getScale() << endl;
+    getTopLeft().display();
+    getBottomRight().display();
 }
 
-int Letter::limit_x(int scale, int pos_x) {
-    return scale * GRID_WIDTH + pos_x;
+
+Point Letter::getBottomRight() {
+    Point P(getScale() * GRID_WIDTH + startPoint.getX(), startPoint.getY());
+    return P;
 }
 
-int Letter::limit_y(int scale, int pos_y) {
-    return scale * GRID_HEIGHT + pos_y;
+Point Letter::getTopLeft() {
+    Point P(startPoint.getX(), getScale() * GRID_HEIGHT + startPoint.getY());
+    return P;
 }
 
-int Letter::check_pos(struct fb_var_screeninfo vinfo, int x, int y){
-    return (x < vinfo.xres) && (y < vinfo.yres);
+// int Letter::limit_x(int scale, int pos_x) {
+//     return scale * GRID_WIDTH + pos_x;
+// }
+
+// int Letter::limit_y(int scale, int pos_y) {
+//     return scale * GRID_HEIGHT + pos_y;
+// }
+
+// Setter
+void Letter::setCharacter(char _character) {
+    character = _character;
+}
+void Letter::setStartPoint(Point _point) {
+    startPoint = _point;
+}
+void Letter::setScale(int _scale) {
+    scale = _scale;
+}
+void Letter::setColor(Color _color) {
+    color = _color;
+}
+
+// Getter
+char Letter::getCharacter() {
+    return character;
+}
+Point Letter::getStartPoint() {
+    return startPoint;
+}
+int Letter::getScale() {
+    return scale;
+}
+Color Letter::getColor() {
+    return color;
 }
 
 int Letter::condition_A(int x, int y, int scale, int pos_x, int pos_y){ 
@@ -249,9 +286,14 @@ int Letter::condition_8(int x, int y, int scale, int pos_x, int pos_y) {
     return !(x > scale && x < scale*4 && ((y > scale && y < scale*2) || (y > scale*3 && y < scale*4)));
 }
 
-int Letter::condition(char c, int x, int y, int scale, int pos_x, int pos_y) {
+int Letter::condition(Point point) {
+    int x = point.getX();
+    int y = point.getY();
+    int pos_x = getTopLeft().getX();
+    int pos_y = getTopLeft().getY();
+    char c = getCharacter();
     switch (c) {
-        case 'A': return condition_A(x,y,scale,pos_x,pos_y);
+        case 'A': cout << "Enter A" << endl; return condition_A(x,y,scale,pos_x,pos_y);
         case 'B': return condition_B(x,y,scale,pos_x,pos_y);
         case 'C': return condition_C(x,y,scale,pos_x,pos_y);
         case 'D': return condition_D(x,y,scale,pos_x,pos_y);

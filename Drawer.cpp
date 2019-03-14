@@ -253,5 +253,24 @@ void Drawer::erase_canvas(map<string,Wireframe> canvas){
     for (auto itr=canvas.begin(); itr!=canvas.end();itr++){
         erase_wireframe(itr->second);
         unfill_wireframe(itr->second);
-    } 
+    }
+}
+
+void Drawer::draw_letter(Letter letter) {
+    int minX = letter.getTopLeft().getX(), maxX = letter.getBottomRight().getX();
+    int minY = letter.getBottomRight().getY(), maxY = letter.getTopLeft().getY();
+    for (int x = minX; x <= maxX; x++) {
+        // cout << "Enter x = " << x << endl;
+        // cout << minY << " " << maxY << endl;
+        for (int y = minY; y <= maxY; y++) {
+            // cout << "Enter y = " << y << endl;
+            Point point(x,y);
+            if (letter.condition(point)) {
+                // cout << "true from ";
+                // point.display();
+                draw_point(point, letter.getColor());
+            }
+        }
+    }
+        
 }
