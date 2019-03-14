@@ -298,6 +298,8 @@ int main() {
         } else if (inputCommand == "label"){
             for (auto itr = wireframes.begin(); itr != wireframes.end(); itr++) {
                 String name =  itr->first;
+                Point loc = itr->second.getTopLeft();
+                drawer.draw_word(name, loc, 6, 5, green);
             }
         } else {
             cout << "Please enter a valid command" << endl;
