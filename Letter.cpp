@@ -9,7 +9,7 @@ Letter::Letter(char c, Drawer drawer, Point point, int scale, Color color) {
     for (y = point.y; y < limit_y(scale, point.y); y++) {
         for (x = point.x; x < limit_x(scale, point.x); x++) {
             if (check_pos(drawer.vinfo, x, y) && condition(c, x, y, scale, point.x, point.y)) {
-                draw_pixel(drawer, new_point(x, y), color);
+                Drawer::draw_point(point, color);
             }
         }
     }
