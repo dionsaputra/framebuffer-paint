@@ -83,9 +83,3 @@ void PaintController::save(map<string, Wireframe> map, string filename) {
         file << endl;
     }
 }
-
-void PaintController::receiveCommand(string command) {
-    if (command == "select") {
-        
-    }
-}

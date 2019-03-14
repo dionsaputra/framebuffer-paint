@@ -28,6 +28,7 @@ Wireframe::Wireframe(vector<Point> _controlPoint, Point _innerPoint, Color _bord
 
 Wireframe::Wireframe(int radius, int numPoint, Point centerPoint, Color color) {
     vector<Point> controlPoint;
+    innerPoint = centerPoint;
     Point P(centerPoint.getX() + radius, centerPoint.getY());
     int degree = 360 / numPoint;
     cout << degree << endl;
@@ -68,7 +69,7 @@ void Wireframe::rotate(Point center, int degree){
 }
 
 void Wireframe::scale(float skala){
-    Point center((bottomRight.getX()+topLeft.getX())/2, (bottomRight.getY()+topLeft.getY())/2);
+    Point center = innerPoint;
     innerPoint.scale(center,skala);
     for (int i=0; i<points.size(); i++) {
         points[i].scale(center, skala);

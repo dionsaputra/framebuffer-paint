@@ -52,48 +52,38 @@ Wireframe createRectangle(Point topLeft, Point bottomRight) {
 
 void setupWindow() {
     int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
-    window = createRectangle(Point(50,50), Point(xres-76, yres-176));
+    window = createRectangle(Point(250,50), Point(xres-50, yres-50));
     window.setBorderColor(Color(0,250,0));
     drawer.draw_wireframe(window);
 }
 
 void setupHorizontalScrollBar() {
     int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
-    horizontalScrollBar = createRectangle(Point(50,yres-175), Point(xres-50, yres-150));
+    horizontalScrollBar = createRectangle(Point(250,yres-50), Point(xres-50, yres-30));
     horizontalScrollBar.setBorderColor(Color(0,250,0));
     drawer.draw_wireframe(horizontalScrollBar);
 }
 
 void setupVerticalScrollBar() {
     int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
-    verticalScrollBar = createRectangle(Point(xres-75,50), Point(xres-50, yres-176));
+    verticalScrollBar = createRectangle(Point(xres-50,50), Point(xres-30, yres-50));
     verticalScrollBar.setBorderColor(Color(0,250,0));
     drawer.draw_wireframe(verticalScrollBar);
-}
-
-void setupStatusBar() {
-    int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
-    statusBar = createRectangle(Point(50,yres-125), Point(xres-50, yres-25));
-    statusBar.setBorderColor(Color(0,250,0));
-    drawer.draw_wireframe(statusBar);
 }
 
 void setup() {
     setupWindow();
     setupHorizontalScrollBar();
     setupVerticalScrollBar();
-    setupStatusBar();
 }
 
 int main() {    
 
     setup();
-
-    // Build scrollbar
-    // Point corner
     
     // Load file
     string inputCommand;
+    for (int i=1; i<=100; i++) printf("\n");
     cout << "filename : ";
     cin >> filename;
     wireframes = controller.load(filename);
@@ -106,32 +96,22 @@ int main() {
     newSettings = oldSettings; 
     newSettings.c_lflag &= (~ICANON & ~ECHO); // one key mode
 
-    fd_set set;
-    struct timeval tv;
-
-    tv.tv_sec = 10;
-    tv.tv_usec = 0;
-
-    FD_ZERO( &set );
-    FD_SET( fileno( stdin ), &set );
-
-    int res = select( fileno( stdin )+1, &set, NULL, NULL, &tv );
-    // tcsetattr( fileno( stdin ), TCSANOW, &newSettings ); // change to one key mode
     // Load file
-
+    flush(cout);
 
     // Receive command
     while(1){
+
         cout << "$";
         flush(cout);
         cin >> inputCommand;
 
         if(inputCommand == "select"){
-            cout << "----list----" << endl;
+            cout << "=----list----" << endl;
             for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
                 if (currentWireframe == itr->first){
                     cout << itr->first << " Selected" << endl;
-                }else{
+                } else {
                     cout << itr->first << endl;
                 }
             }
@@ -148,48 +128,54 @@ int main() {
         } else if(inputCommand == "scroll"){
             tcsetattr( fileno( stdin ), TCSANOW, &newSettings );
             cout << "Use WASD to navigate" << endl;
-            cout << "Enter 'i' to exit from scroll mode" << endl;
+            cout << "Enter 'x' to exit from scroll mode" << endl;
             while (1){
-                if( res > 0 ){
-                    char c;
-                    read( fileno( stdin ), &c, 1 );
-                    // printf( "Input available %c %d\n",c,c);
-                    if (c == 'w'){
-                        // Scroll up
-                    } else if (c == 'a'){
-                        // Scroll left
-                    } else if (c == 's'){
-                        // Scroll down
-                    } else if (c == 'd'){
-                        // Scroll right
-                    } else if(c=='i'){
-                        // Change settings
-                        tcsetattr( fileno( stdin ), TCSANOW, &oldSettings );    
-                        break;
-                    }
-                }
-                else if( res < 0 )
-                {
-                    perror( "select error" );
+                char c;
+                read( fileno( stdin ), &c, 1 );
+                // printf( "Input available %c %d\n",c,c);
+                if (c == 'w'){
+                    // Scroll up
+                } else if (c == 'a'){
+                    // Scroll left
+                } else if (c == 's'){
+                    // Scroll down
+                } else if (c == 'd'){
+                    // Scroll right
+                } else if(c=='x'){
+                    // Change settings
+                    tcsetattr( fileno( stdin ), TCSANOW, &oldSettings );    
                     break;
-                }
-                else
-                {
-                    printf( "Select timeout\n" );
                 }
             }
         } else if (inputCommand == "exit") {
             exit(1);
         } else if (inputCommand == "translate" && currentWireframe != ""){
-            int move_x, move_y;
-            cout << "x y: ";
-            cin >> move_x >> move_y;
-            
-            drawer.erase_canvas(wireframes);
+            tcsetattr( fileno( stdin ), TCSANOW, &newSettings );
+            cout << "Use IJKL to move " << currentWireframe << " object" << endl;
+            cout << "Enter 'x' to finish" << endl;
+            while (1){
+                char c;
+                read( fileno( stdin ), &c, 1 );
+                if (c == 'i'){
+                    drawer.erase_canvas(wireframes);
+                    wireframes.find(currentWireframe)->second.translate(0, -10);
+                } else if (c == 'j'){
+                    drawer.erase_canvas(wireframes);
+                    wireframes.find(currentWireframe)->second.translate(-10, 0);
+                } else if (c == 'k'){
+                    drawer.erase_canvas(wireframes);
+                    wireframes.find(currentWireframe)->second.translate(0, 10);
+                } else if (c == 'l'){
+                    drawer.erase_canvas(wireframes);
+                    wireframes.find(currentWireframe)->second.translate(10, 0);
+                } else if(c=='x'){
+                    // Change settings
+                    tcsetattr( fileno( stdin ), TCSANOW, &oldSettings );    
+                    break;
+                }
 
-            wireframes.find(currentWireframe)->second.translate(move_x, move_y);
-            drawer.draw_canvas(wireframes,window);
-
+                drawer.draw_canvas(wireframes,window);
+            }
         } else if (inputCommand == "rotate" && currentWireframe != ""){
             int degree;
             cout << "degree: ";
@@ -200,10 +186,11 @@ int main() {
             wireframes.find(currentWireframe)->second.rotate(degree);
             drawer.draw_canvas(wireframes,window);
         } else if (inputCommand == "scale" && currentWireframe != "") {
-            int scale;
-            cout << "scale: ";
+            float scale;
+            // scanf("%f", &scale);
             cin >> scale;
-            
+            cout << scale << endl;
+
             drawer.erase_canvas(wireframes);
 
             wireframes.find(currentWireframe)->second.scale(scale);
@@ -214,5 +201,5 @@ int main() {
     }
 
     tcsetattr( fileno( stdin ), TCSANOW, &oldSettings );
-    
+
 }
