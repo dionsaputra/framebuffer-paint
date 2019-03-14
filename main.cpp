@@ -79,8 +79,8 @@ void setupVerticalScrollBarBorder() {
 void setupHorizontalScrollBar() {
     int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
     horizontalScrollBar = createRectangle(Point(250,yres-50), Point(350, yres-30));
-    horizontalScrollBar.setBorderColor(Color(0,250,0));
-    horizontalScrollBar.setFillColor(Color(0,250,0));
+    horizontalScrollBar.setBorderColor(Color(0,205,0));
+    horizontalScrollBar.setFillColor(Color(0,200,0));
     horizontalScrollBar.setInnerPoint(Point(300, yres-40));
     drawer.draw_wireframe(horizontalScrollBar);
     drawer.queueFloodFill(horizontalScrollBar);
@@ -89,11 +89,19 @@ void setupHorizontalScrollBar() {
 void setupVerticalScrollBar() {
     int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
     verticalScrollBar = createRectangle(Point(xres-50,50), Point(xres-30, 150));
-    verticalScrollBar.setBorderColor(Color(0,250,0));
-    verticalScrollBar.setFillColor(Color(0,250,0));
+    verticalScrollBar.setBorderColor(Color(0,205,0));
+    verticalScrollBar.setFillColor(Color(0,200,0));
     verticalScrollBar.setInnerPoint(Point(xres-40, 100));
     drawer.draw_wireframe(verticalScrollBar);
     drawer.queueFloodFill(verticalScrollBar);
+}
+
+void moveScrollBar(Wireframe* scrollbar,int x,int y){
+    drawer.erase_wireframe(*scrollbar);
+    drawer.unfill_wireframe(*scrollbar);
+    scrollbar->translate(x,y);
+    drawer.draw_wireframe(*scrollbar);
+    drawer.queueFloodFill(*scrollbar);
 }
 
 void setup() {
@@ -163,18 +171,32 @@ int main() {
                 read( fileno( stdin ), &c, 1 );
                 // printf( "Input available %c %d\n",c,c);
                 if (c == 'w'){
+                    drawer.erase_canvas(wireframes,disorientation);
+                    disorientation.translate(0,5);
+                    moveScrollBar(&verticalScrollBar,0,-5);
                     // Scroll up
                 } else if (c == 'a'){
+                    drawer.erase_canvas(wireframes,disorientation);
+                    disorientation.translate(5,0);
+                    moveScrollBar(&horizontalScrollBar,-5,0);
                     // Scroll left
                 } else if (c == 's'){
+                    drawer.erase_canvas(wireframes,disorientation);
+                    disorientation.translate(0,-5);
+                    moveScrollBar(&verticalScrollBar,0,5);
                     // Scroll down
                 } else if (c == 'd'){
+                    drawer.erase_canvas(wireframes,disorientation);
+                    disorientation.translate(-5,0);
+                    moveScrollBar(&horizontalScrollBar,5,0);
                     // Scroll right
                 } else if(c=='x'){
                     // Change settings
                     tcsetattr( fileno( stdin ), TCSANOW, &oldSettings );    
                     break;
                 }
+                
+                drawer.draw_canvas(wireframes,window,disorientation);
             }
         } else if (inputCommand == "exit") {
             exit(1);
