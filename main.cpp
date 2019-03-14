@@ -20,6 +20,8 @@
 #include "Wireframe.h"
 #include "PaintController.h"
 #include "Letter.h"
+#define CANVAS_WIDTH 1200
+#define CANVAS_LENGTH 900
 using namespace std;
 
 
@@ -40,6 +42,7 @@ Wireframe horizontalScrollBarBorder;
 Wireframe verticalScrollBarBorder;
 Wireframe statusBar;
 Point disorientation;
+float diffX,diffY;
 
 Wireframe createRectangle(Point topLeft, Point bottomRight) {
     vector<Point> points;
@@ -59,6 +62,9 @@ void setupWindow() {
     window = createRectangle(Point(250,50), Point(xres-50, yres-50));
     window.setBorderColor(Color(0,250,0));
     disorientation = window.getTopLeft();
+    diffX = (float) (xres-300)/CANVAS_WIDTH;
+    diffY = (float) (yres-100)/CANVAS_LENGTH;
+    cout << diffX << "," << diffY << endl;
     drawer.draw_wireframe(window);
 }
 
@@ -78,7 +84,9 @@ void setupVerticalScrollBarBorder() {
 
 void setupHorizontalScrollBar() {
     int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
-    horizontalScrollBar = createRectangle(Point(250,yres-50), Point(350, yres-30));
+    int size = (window.getBottomRight().getX() - window.getTopLeft().getX()) * diffX;
+    window.getBottomRight().display();
+    horizontalScrollBar = createRectangle(Point(250,yres-49), Point(250 + size, yres-31));
     horizontalScrollBar.setBorderColor(Color(0,205,0));
     horizontalScrollBar.setFillColor(Color(0,200,0));
     horizontalScrollBar.setInnerPoint(Point(300, yres-40));
@@ -88,7 +96,9 @@ void setupHorizontalScrollBar() {
 
 void setupVerticalScrollBar() {
     int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
-    verticalScrollBar = createRectangle(Point(xres-50,50), Point(xres-30, 150));
+    int size =  (window.getBottomRight().getY() - window.getTopLeft().getY()) * diffY;
+    verticalScrollBar = createRectangle(Point(xres-49,50), Point(xres-31, 50 + size));
+    window.getTopLeft().display();
     verticalScrollBar.setBorderColor(Color(0,205,0));
     verticalScrollBar.setFillColor(Color(0,200,0));
     verticalScrollBar.setInnerPoint(Point(xres-40, 100));
@@ -114,11 +124,11 @@ void setup() {
 
 int main() {    
 
-    setup();
     
     // Load file
     string inputCommand;
     for (int i=1; i<=100; i++) printf("\n");
+    setup();
     cout << "filename : ";
     cin >> filename;
     wireframes = controller.load(filename);
@@ -170,25 +180,25 @@ int main() {
                 char c;
                 read( fileno( stdin ), &c, 1 );
                 // printf( "Input available %c %d\n",c,c);
-                if (c == 'w'){
+                if (c == 'w' && verticalScrollBar.getTopLeft().getY()>50){
                     drawer.erase_canvas(wireframes,disorientation);
                     disorientation.translate(0,5);
-                    moveScrollBar(&verticalScrollBar,0,-5);
+                    moveScrollBar(&verticalScrollBar,0,-5 * diffY);
                     // Scroll up
-                } else if (c == 'a'){
+                } else if (c == 'a' && horizontalScrollBar.getTopLeft().getX()>250){
                     drawer.erase_canvas(wireframes,disorientation);
                     disorientation.translate(5,0);
-                    moveScrollBar(&horizontalScrollBar,-5,0);
+                    moveScrollBar(&horizontalScrollBar,-5 * diffX,0);
                     // Scroll left
-                } else if (c == 's'){
+                } else if (c == 's' && verticalScrollBar.getBottomRight().getY()<drawer.vinfo.yres-50){
                     drawer.erase_canvas(wireframes,disorientation);
                     disorientation.translate(0,-5);
-                    moveScrollBar(&verticalScrollBar,0,5);
+                    moveScrollBar(&verticalScrollBar,0,5*diffY);
                     // Scroll down
-                } else if (c == 'd'){
+                } else if (c == 'd' && horizontalScrollBar.getBottomRight().getX()<drawer.vinfo.xres-50){
                     drawer.erase_canvas(wireframes,disorientation);
                     disorientation.translate(-5,0);
-                    moveScrollBar(&horizontalScrollBar,5,0);
+                    moveScrollBar(&horizontalScrollBar,5*diffX,0);
                     // Scroll right
                 } else if(c=='x'){
                     // Change settings
@@ -319,9 +329,9 @@ int main() {
             drawer.draw_canvas(wireframes,window, disorientation);
         } else if (inputCommand == "label"){
             for (auto itr = wireframes.begin(); itr != wireframes.end(); itr++) {
-                String name =  itr->first;
+                string name =  itr->first;
                 Point loc = itr->second.getTopLeft();
-                drawer.draw_word(name, loc, 6, 5, green);
+                drawer.draw_word(name, loc, 6, 5, Color(20,220,30));
             }
         } else {
             cout << "Please enter a valid command" << endl;
