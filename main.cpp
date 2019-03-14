@@ -5,6 +5,9 @@
 #include <linux/fb.h>
 #include <sys/mman.h>
 #include <sys/ioctl.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <termios.h>
 #include <ctype.h>
 #include <time.h>
 #include <vector>
@@ -18,9 +21,6 @@
 #include "PaintController.h"
 using namespace std;
 
-#include <stdio.h>
-#include <sys/types.h>
-#include <termios.h>
 
 // Global variable
 PaintController controller;
@@ -194,6 +194,24 @@ int main() {
             drawer.erase_canvas(wireframes);
 
             wireframes.find(currentWireframe)->second.scale(scale);
+            drawer.draw_canvas(wireframes,window);
+        } else if(inputCommand == "create"){
+            int radius, nPoint, xCenter, yCenter, red, green, boy;
+            string nameShape;
+
+            cout << "shape's name: ";
+            cin >> nameShape;
+            cout << "center (x y): ";
+            cin >> xCenter >> yCenter;
+            cout << "radius: ";
+            cin >> radius;
+            cout << "number of point: ";
+            cin >> nPoint;
+            cout << "color (r g b):";
+            cin >> red >> green >> boy;
+
+            Wireframe wireframe(radius, nPoint, Point(xCenter, yCenter), Color(red, green, boy));
+            wireframes.insert(pair<string, Wireframe>(nameShape, wireframe));
             drawer.draw_canvas(wireframes,window);
         } else {
             cout << "Please enter a valid command" << endl;
