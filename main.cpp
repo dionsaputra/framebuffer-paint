@@ -20,6 +20,8 @@
 #include "Wireframe.h"
 #include "PaintController.h"
 #include "Letter.h"
+#define CANVAS_WIDTH 1200
+#define CANVAS_LENGTH 900
 using namespace std;
 
 
@@ -40,6 +42,7 @@ Wireframe horizontalScrollBarBorder;
 Wireframe verticalScrollBarBorder;
 Wireframe statusBar;
 Point disorientation;
+float diffX,diffY;
 
 Wireframe createRectangle(Point topLeft, Point bottomRight) {
     vector<Point> points;
@@ -59,19 +62,22 @@ void setupWindow() {
     window = createRectangle(Point(250,50), Point(xres-50, yres-50));
     window.setBorderColor(Color(0,250,0));
     disorientation = window.getTopLeft();
+    diffX = (float) (xres-300)/CANVAS_WIDTH;
+    diffY = (float) (yres-100)/CANVAS_LENGTH;
+    cout << diffX << "," << diffY << endl;
     drawer.draw_wireframe(window);
 }
 
 void setupHorizontalScrollBarBorder() {
     int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
-    horizontalScrollBarBorder = createRectangle(Point(250,yres-50), Point(xres-50, yres-30));
+    horizontalScrollBarBorder = createRectangle(Point(250,yres-49), Point(xres-50, yres-31));
     horizontalScrollBarBorder.setBorderColor(Color(0,250,0));
     drawer.draw_wireframe(horizontalScrollBarBorder);
 }
 
 void setupVerticalScrollBarBorder() {
     int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
-    verticalScrollBarBorder = createRectangle(Point(xres-50,50), Point(xres-30, yres-50));
+    verticalScrollBarBorder = createRectangle(Point(xres-49,50), Point(xres-31, yres-50));
     verticalScrollBarBorder.setBorderColor(Color(0,250,0));
     drawer.draw_wireframe(verticalScrollBarBorder);
 }
@@ -211,6 +217,16 @@ void zoom(float scale){
     }
 }
 
+void moveScrollBar(Wireframe* scrollbar,int x,int y){
+    drawer.erase_wireframe(*scrollbar);
+    drawer.unfill_wireframe(*scrollbar);
+    scrollbar->translate(x,y);
+    drawer.draw_wireframe(*scrollbar);
+    drawer.queueFloodFill(*scrollbar);
+    drawer.draw_wireframe(horizontalScrollBarBorder);
+    drawer.draw_wireframe(verticalScrollBarBorder);
+}
+
 void setup() {
     setupWindow();
     setupHorizontalScrollBarBorder();
@@ -220,10 +236,12 @@ void setup() {
 }
 
 int main() {    
-    setup();
+
+    
     // Load file
     string inputCommand;
     for (int i=1; i<=100; i++) printf("\n");
+    setup();
     cout << "filename : ";
     cin >> filename;
     wireframes = controller.load(filename);
@@ -273,20 +291,34 @@ int main() {
             while (1){
                 char c;
                 read( fileno( stdin ), &c, 1 );
-                
-                if (c == 'w'){
-                    scroll(0,-5); // scroll up
-                } else if (c == 'a'){
-                    scroll(-5,0); // scroll left
-                } else if (c == 's'){
-                    scroll(0,5); // scroll down
-                } else if (c == 'd'){
-                    scroll(5,0); // scroll right
+                // printf( "Input available %c %d\n",c,c);
+                if (c == 'w' && verticalScrollBar.getTopLeft().getY()>50){
+                    drawer.erase_canvas(wireframes,disorientation);
+                    disorientation.translate(0,5);
+                    moveScrollBar(&verticalScrollBar,0,-5 * diffY);
+                    // Scroll up
+                } else if (c == 'a' && horizontalScrollBar.getTopLeft().getX()>250){
+                    drawer.erase_canvas(wireframes,disorientation);
+                    disorientation.translate(5,0);
+                    moveScrollBar(&horizontalScrollBar,-5 * diffX,0);
+                    // Scroll left
+                } else if (c == 's' && verticalScrollBar.getBottomRight().getY()<drawer.vinfo.yres-50){
+                    drawer.erase_canvas(wireframes,disorientation);
+                    disorientation.translate(0,-5);
+                    moveScrollBar(&verticalScrollBar,0,5*diffY);
+                    // Scroll down
+                } else if (c == 'd' && horizontalScrollBar.getBottomRight().getX()<drawer.vinfo.xres-50){
+                    drawer.erase_canvas(wireframes,disorientation);
+                    disorientation.translate(-5,0);
+                    moveScrollBar(&horizontalScrollBar,5*diffX,0);
+                    // Scroll right
                 } else if(c=='x'){
                     // Change settings
                     tcsetattr( fileno( stdin ), TCSANOW, &oldSettings );    
                     break;
                 }
+                
+                drawer.draw_canvas(wireframes,window,disorientation);
             }
         } else if (inputCommand == "exit") {
             exit(1);
@@ -428,7 +460,7 @@ int main() {
             for (auto itr = wireframes.begin(); itr != wireframes.end(); itr++) {
                 string name =  itr->first;
                 Point loc = itr->second.getTopLeft();
-                drawer.draw_word(name, loc, 6, 5, Color(0,0,255));
+                drawer.draw_word(name, loc, 6, 5, Color(20,220,30));
             }
         } else {
             cout << "Please enter a valid command" << endl;
