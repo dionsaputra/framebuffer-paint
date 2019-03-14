@@ -89,3 +89,19 @@ Point Point::getTop() {
 Point Point::getBottom() {
     return Point(x, y+1);
 }
+
+bool Point::isRight(Point point) {
+    return x >= point.x;
+}
+
+bool Point::isLeft(Point point) {
+    return x <= point.x;
+}
+
+bool Point::isTop(Point point) {
+    return y <= point.y;
+}
+
+bool Point::isBottom(Point point) {
+    return y >= point.y;
+}
