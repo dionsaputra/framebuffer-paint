@@ -3,32 +3,57 @@
 Wireframe::Wireframe(){}
 
 Wireframe::Wireframe(vector<Point> _controlPoint, Color _borderColor) {
+    // cout << "ctor called 1" << endl;
     points = _controlPoint;
     borderColor = _borderColor;
+    lineStyle = 's';
+    thickness = 1;
     updateEnvelope();
     updateInnerPoint();
 }
 
 Wireframe::Wireframe(vector<Point> _controlPoint, Point _innerPoint){
+    // cout << "ctor called 2" << endl;
     points = _controlPoint;
     innerPoint = _innerPoint;
+    lineStyle = 's';
+    thickness = 1;
     updateEnvelope();
     updateInnerPoint();
 }
 
 Wireframe::Wireframe(vector<Point> _controlPoint, Point _innerPoint, Color _borderColor, Color _colorFill, int _priority){
+    // cout << "ctor called 3" << endl;
     fillColor = _colorFill;
     borderColor = _borderColor;
     points = _controlPoint;
     priority = _priority;
     innerPoint = _innerPoint;
+    lineStyle = 's';
+    thickness = 1;
+    updateEnvelope();
+    updateInnerPoint();
+}
+
+Wireframe::Wireframe(vector<Point> _controlPoint, Point _innerPoint, Color _borderColor, Color _colorFill, int _priority, float _thickness, char _lineStyle){
+    // cout << "ctor called 4" << endl;
+    fillColor = _colorFill;
+    borderColor = _borderColor;
+    points = _controlPoint;
+    priority = _priority;
+    innerPoint = _innerPoint;
+    lineStyle = _lineStyle;
+    thickness = _thickness;
     updateEnvelope();
     updateInnerPoint();
 }
 
 Wireframe::Wireframe(int radius, int numPoint, Point centerPoint, Color color) {
+    // cout << "ctor called 5" << endl;
     vector<Point> controlPoint;
     innerPoint = centerPoint;
+    lineStyle = 's';
+    thickness = 1;
     Point P(centerPoint.getX() + radius, centerPoint.getY());
     int degree = 360 / numPoint;
     cout << degree << endl;
@@ -137,6 +162,24 @@ int Wireframe::getPriority() {
     return priority;
 }
 
+float Wireframe::getThickness() {
+    return thickness;
+};
+
+char Wireframe::getLineStyle(){
+    return lineStyle;
+};
+
+string Wireframe::getLineStyleString(){
+    if(lineStyle == 'd'){
+        return "dot";
+    } else if (lineStyle == 's'){
+        return "solid";
+    } else {
+        return "undefined";
+    }
+};
+
 void Wireframe::setPoints(vector<Point> _points) {
     points = _points;
 }
@@ -164,6 +207,14 @@ void Wireframe::setBorderColor(Color _color){
 void Wireframe::setPriority(int _priority) {
     priority = _priority;
 }
+
+void Wireframe::setThickness(float _thickness){
+    thickness = _thickness;
+};
+
+void Wireframe::setLineStyle(char _lineStyle){
+    lineStyle = _lineStyle;
+};
 
 bool Wireframe::isInEnvelope(Point point) {
     int minX = topLeft.getX(), maxX = bottomRight.getX();
@@ -201,6 +252,9 @@ Wireframe Wireframe::clippingResult(Wireframe window) {
         wireframe.setBorderColor(borderColor);
         wireframe.setFillColor(fillColor);
         wireframe.setPriority(priority);
+        wireframe.setThickness(thickness);
+        wireframe.setLineStyle(lineStyle);
+
         return wireframe;
     }
 }

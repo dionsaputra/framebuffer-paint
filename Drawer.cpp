@@ -174,8 +174,8 @@ void Drawer::erase_point(Point point) {
 void Drawer::draw_wireframe(Wireframe wireframe) {
     int pointsSize = wireframe.getPoints().size();
     for (int i=1; i<=pointsSize; i++) {
-        drawLine(wireframe.getPoints()[(i-1)%pointsSize], wireframe.getPoints()[i%pointsSize], wireframe.getBorderColor());
-        // drawLineWidth(wireframe.getPoints()[(i-1)%pointsSize], wireframe.getPoints()[i%pointsSize], 10,wireframe.getBorderColor()); 
+        // drawLine(wireframe.getPoints()[(i-1)%pointsSize], wireframe.getPoints()[i%pointsSize], wireframe.getBorderColor());
+        drawLineWidth(wireframe.getPoints()[(i-1)%pointsSize], wireframe.getPoints()[i%pointsSize], wireframe.getThickness(), wireframe.getBorderColor()); 
     }
 }
 
