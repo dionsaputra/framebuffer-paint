@@ -208,6 +208,14 @@ int main() {
 
             wireframes.find(currentWireframe)->second.scale(scale);
             drawer.draw_canvas(wireframes,window);
+        } else if (inputCommand == "fill" && currentWireframe != "") {
+            int red, green, blue;
+            cout << "fill color (r g b): ";
+            cin >> red >> green >> blue;
+            
+            drawer.erase_canvas(wireframes);
+            wireframes.find(currentWireframe)->second.setFillColor(Color(red, green, blue));
+            drawer.draw_canvas(wireframes,window);
         } else if(inputCommand == "create"){
             int radius, nPoint, xCenter, yCenter, red, green, boy;
             string nameShape;
