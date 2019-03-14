@@ -294,6 +294,10 @@ int main() {
                 wireframes.find(currentWireframe)->second.setLineStyle(lineStyle);
             }
             drawer.draw_canvas(wireframes,window);
+        } else if (inputCommand == "label"){
+            for (auto itr = wireframes.begin(); itr != wireframes.end(); itr++) {
+                String name =  itr->first;
+            }
         } else {
             cout << "Please enter a valid command" << endl;
         }
