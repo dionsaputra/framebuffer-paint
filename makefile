@@ -1,6 +1,6 @@
 COMP = g++
 FLAG = -o
-INPT = main_test.cpp Letter.cpp Color.cpp Drawer.cpp Point.cpp Wireframe.cpp PaintController.cpp Parser.cpp
+INPT = main.cpp Letter.cpp Color.cpp Drawer.cpp Point.cpp Wireframe.cpp PaintController.cpp Parser.cpp
 OUTP = app
 
 all : program1

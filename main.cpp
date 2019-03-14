@@ -76,38 +76,151 @@ void setupVerticalScrollBarBorder() {
     drawer.draw_wireframe(verticalScrollBarBorder);
 }
 
-void setupHorizontalScrollBar() {
+void setupScrollbars() {
     int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
-    horizontalScrollBar = createRectangle(Point(250,yres-50), Point(350, yres-30));
+    horizontalScrollBar = createRectangle(Point(450,yres-50), Point(xres-250, yres-30));
     horizontalScrollBar.setBorderColor(Color(0,250,0));
     horizontalScrollBar.setFillColor(Color(0,250,0));
-    horizontalScrollBar.setInnerPoint(Point(300, yres-40));
+    horizontalScrollBar.setInnerPoint(Point((450+xres-250)/2, (yres-50+yres-30)/2));
     drawer.draw_wireframe(horizontalScrollBar);
     drawer.queueFloodFill(horizontalScrollBar);
-}
 
-void setupVerticalScrollBar() {
-    int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
-    verticalScrollBar = createRectangle(Point(xres-50,50), Point(xres-30, 150));
+    verticalScrollBar = createRectangle(Point(xres-50,250), Point(xres-30, yres-250));
     verticalScrollBar.setBorderColor(Color(0,250,0));
     verticalScrollBar.setFillColor(Color(0,250,0));
-    verticalScrollBar.setInnerPoint(Point(xres-40, 100));
+    verticalScrollBar.setInnerPoint(Point((xres-50+xres-30)/2, (250+yres-250)/2));
     drawer.draw_wireframe(verticalScrollBar);
     drawer.queueFloodFill(verticalScrollBar);
+}
+
+void resizeHorizontalScrollBar(int dx){
+    int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
+    Point newTopLeft =  Point(horizontalScrollBar.getTopLeft().getX()+dx,yres-50);
+    Point newBottomRight = Point(horizontalScrollBar.getBottomRight().getX()-dx,yres-30);
+    horizontalScrollBar = createRectangle(newTopLeft, newBottomRight);
+    horizontalScrollBar.setBorderColor(Color(0,250,0));
+    horizontalScrollBar.setFillColor(Color(0,250,0));
+    horizontalScrollBar.setInnerPoint(Point((newTopLeft.getX() + newBottomRight.getX())/2, (newTopLeft.getY() + newBottomRight.getY())/2));
+}
+
+void resizeVerticalScrollBar(int dy){
+    int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
+    Point newTopLeft =  Point(xres-50,verticalScrollBar.getTopLeft().getY()+dy);
+    Point newBottomRight = Point(xres-30,verticalScrollBar.getBottomRight().getY()-dy);
+    verticalScrollBar = createRectangle(newTopLeft, newBottomRight);
+    verticalScrollBar.setBorderColor(Color(0,250,0));
+    verticalScrollBar.setFillColor(Color(0,250,0));
+    verticalScrollBar.setInnerPoint(Point((newTopLeft.getX() + newBottomRight.getX())/2, (newTopLeft.getY() + newBottomRight.getY())/2));
+}
+
+void redrawScrollbars(){
+    drawer.draw_wireframe(horizontalScrollBar);
+    drawer.draw_wireframe(verticalScrollBar);
+    drawer.queueFloodFill(horizontalScrollBar);
+    drawer.queueFloodFill(verticalScrollBar);
+    drawer.draw_wireframe(horizontalScrollBarBorder);
+    drawer.draw_wireframe(verticalScrollBarBorder);
+}
+
+void scroll(int dx, int dy){
+    
+    int leftScrollbarBorder = horizontalScrollBarBorder.getTopLeft().getX();
+    int rightScrollbarBorder = horizontalScrollBarBorder.getBottomRight().getX();
+    int topScrollbarBorder = verticalScrollBarBorder.getTopLeft().getY();
+    int bottomScrollbarBorder = verticalScrollBarBorder.getBottomRight().getY();
+
+    if (horizontalScrollBar.getTopLeft().getX()+dx >= leftScrollbarBorder 
+    && horizontalScrollBar.getBottomRight().getX()+dx <= rightScrollbarBorder
+    && verticalScrollBar.getTopLeft().getY()+dy >= topScrollbarBorder
+    && verticalScrollBar.getBottomRight().getY()+dy <= bottomScrollbarBorder){ 
+
+        drawer.erase_wireframe(horizontalScrollBar);
+        drawer.unfill_wireframe(horizontalScrollBar);
+        drawer.erase_wireframe(verticalScrollBar);
+        drawer.unfill_wireframe(verticalScrollBar);
+
+        drawer.erase_canvas(wireframes,disorientation);
+
+        if (dx != 0)
+            horizontalScrollBar.translate(dx,dy);
+        if (dy != 0)
+            verticalScrollBar.translate(dx,dy);
+        for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
+            itr->second.translate(-dx,-dy);
+        }
+        
+        drawer.draw_canvas(wireframes,window,disorientation);
+        redrawScrollbars();
+    }
+}
+
+bool checkZoomOut(int dx, int dy){
+    int leftScrollbarBorder = horizontalScrollBarBorder.getTopLeft().getX();
+    int rightScrollbarBorder = horizontalScrollBarBorder.getBottomRight().getX();
+    int topScrollbarBorder = verticalScrollBarBorder.getTopLeft().getY();
+    int bottomScrollbarBorder = verticalScrollBarBorder.getBottomRight().getY();
+
+    return (dx > 0 && horizontalScrollBar.getTopLeft().getX()+dx >= leftScrollbarBorder 
+    && horizontalScrollBar.getBottomRight().getX()-dx <= rightScrollbarBorder
+    && ((horizontalScrollBar.getBottomRight().getX() - horizontalScrollBar.getTopLeft().getX()) > 100)
+    && verticalScrollBar.getTopLeft().getY()-dy >= topScrollbarBorder
+    && verticalScrollBar.getBottomRight().getY()+dy <= bottomScrollbarBorder
+    && (verticalScrollBar.getBottomRight().getY() - verticalScrollBar.getTopLeft().getY()> 55));
+}
+
+bool checkZoomIn(int dx, int dy){
+    int leftScrollbarBorder = horizontalScrollBarBorder.getTopLeft().getX();
+    int rightScrollbarBorder = horizontalScrollBarBorder.getBottomRight().getX();
+    int topScrollbarBorder = verticalScrollBarBorder.getTopLeft().getY();
+    int bottomScrollbarBorder = verticalScrollBarBorder.getBottomRight().getY();
+
+    return (dx < 0 && horizontalScrollBar.getTopLeft().getX()+dx >= leftScrollbarBorder 
+    && horizontalScrollBar.getBottomRight().getX()-dx <= rightScrollbarBorder
+    && verticalScrollBar.getTopLeft().getY()-dy >= topScrollbarBorder
+    && verticalScrollBar.getBottomRight().getY()+dy <= bottomScrollbarBorder);
+}
+
+void zoom(float scale){
+    int dx,dy;
+    
+    if (scale < 1){
+        dx = -35;
+        dy = -15;
+    } else {
+        dx = 35;
+        dy = 15;
+    }
+
+    if (checkZoomOut(dx,dy) || checkZoomIn(dx,dy)){ 
+
+        drawer.erase_wireframe(horizontalScrollBar);
+        drawer.unfill_wireframe(horizontalScrollBar);
+        drawer.erase_wireframe(verticalScrollBar);
+        drawer.unfill_wireframe(verticalScrollBar);
+
+        drawer.erase_canvas(wireframes,disorientation);
+
+        for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
+            itr->second.scale(scale);
+        }
+        
+        resizeHorizontalScrollBar(dx);
+        resizeVerticalScrollBar(dy);
+        drawer.draw_canvas(wireframes,window,disorientation);
+        redrawScrollbars();
+    }
 }
 
 void setup() {
     setupWindow();
     setupHorizontalScrollBarBorder();
     setupVerticalScrollBarBorder();
-    setupVerticalScrollBar();
-    setupHorizontalScrollBar();
+    setupScrollbars();
+    redrawScrollbars();
 }
 
 int main() {    
-
     setup();
-    
     // Load file
     string inputCommand;
     for (int i=1; i<=100; i++) printf("\n");
@@ -115,8 +228,6 @@ int main() {
     cin >> filename;
     wireframes = controller.load(filename);
     drawer.draw_canvas(wireframes, window, disorientation);
-    // drawer.drawLineWidth(Point(100, 100), Point(200, 200), 2, Color(123, 32, 231));
-    // drawer.drawLineWidth(Point(200, 100), Point(300, 200), 10, Color(123, 32, 231));
 
     // Setup input mode
     struct termios oldSettings, newSettings;
@@ -139,14 +250,14 @@ int main() {
             cout << "----list----" << endl;
             for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
                 if (currentWireframe == itr->first){
-                    cout << itr->first << " Selected" << endl;
+                    cout << itr->first << " (selected)" << endl;
                 } else {
                     cout << itr->first << endl;
                 }
             }
             cout << "------------" << endl;
             cin >> currentWireframe;
-            cout << currentWireframe <<" Selected" << endl;
+            cout << currentWireframe <<" selected" << endl;
         } else if (inputCommand == "save") {
             cout << "filename: ";
             cin >> filename;
@@ -154,22 +265,23 @@ int main() {
             cout << "saved" << endl;
         } else if (inputCommand == "current") {
             cout << currentWireframe << endl;
+            int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
         } else if(inputCommand == "scroll"){
             tcsetattr( fileno( stdin ), TCSANOW, &newSettings );
             cout << "Use WASD to navigate" << endl;
-            cout << "Enter 'x' to exit from scroll mode" << endl;
+            cout << "Enter 'x' to return" << endl;
             while (1){
                 char c;
                 read( fileno( stdin ), &c, 1 );
-                // printf( "Input available %c %d\n",c,c);
+                
                 if (c == 'w'){
-                    // Scroll up
+                    scroll(0,-5); // scroll up
                 } else if (c == 'a'){
-                    // Scroll left
+                    scroll(-5,0); // scroll left
                 } else if (c == 's'){
-                    // Scroll down
+                    scroll(0,5); // scroll down
                 } else if (c == 'd'){
-                    // Scroll right
+                    scroll(5,0); // scroll right
                 } else if(c=='x'){
                     // Change settings
                     tcsetattr( fileno( stdin ), TCSANOW, &oldSettings );    
@@ -204,6 +316,7 @@ int main() {
                 }
 
                 drawer.draw_canvas(wireframes,window,disorientation);
+                setup();
             }
         } else if (inputCommand == "rotate" && currentWireframe != ""){
             tcsetattr( fileno( stdin ), TCSANOW, &newSettings );
@@ -226,6 +339,25 @@ int main() {
                 }
 
                 drawer.draw_canvas(wireframes,window,disorientation);
+                setup();
+            }
+        } else if (inputCommand == "zoom") {
+            tcsetattr( fileno( stdin ), TCSANOW, &newSettings );
+            cout << "Use '=' to zoom in" << endl;
+            cout << "Use '-' to zoom out" << endl;
+            cout << "Enter 'x' to return" << endl;
+            while (1){
+                char c;
+                read( fileno( stdin ), &c, 1 );
+                if (c == '='){
+                    zoom(1.15);
+                } else if (c == '-'){
+                    zoom(0.75);
+                } else if(c=='x'){
+                    // Change settings
+                    tcsetattr( fileno( stdin ), TCSANOW, &oldSettings);    
+                    break;
+                }
             }
         } else if (inputCommand == "scale" && currentWireframe != "") {
             tcsetattr( fileno( stdin ), TCSANOW, &newSettings );
@@ -246,7 +378,6 @@ int main() {
                     tcsetattr( fileno( stdin ), TCSANOW, &oldSettings);    
                     break;
                 }
-
             drawer.draw_canvas(wireframes,window,disorientation);
             }
         } else if (inputCommand == "fill" && currentWireframe != "") {
@@ -286,9 +417,7 @@ int main() {
             
             drawer.erase_canvas(wireframes,disorientation);
             if(thickness >= 1.0f){
-                // cout << "before " << wireframes.find(currentWireframe)->second.getThickness() << thickness << endl;
                 wireframes.find(currentWireframe)->second.setThickness(thickness);
-                // cout << "after " << wireframes.find(currentWireframe)->second.getThickness() << endl;
             }   
 
             if(lineStyle == 's' || lineStyle == 'd'){
@@ -297,15 +426,13 @@ int main() {
             drawer.draw_canvas(wireframes,window, disorientation);
         } else if (inputCommand == "label"){
             for (auto itr = wireframes.begin(); itr != wireframes.end(); itr++) {
-                String name =  itr->first;
+                string name =  itr->first;
                 Point loc = itr->second.getTopLeft();
-                drawer.draw_word(name, loc, 6, 5, green);
+                drawer.draw_word(name, loc, 6, 5, Color(0,0,255));
             }
         } else {
             cout << "Please enter a valid command" << endl;
         }
     }
-
     tcsetattr( fileno( stdin ), TCSANOW, &oldSettings );
-
 }
