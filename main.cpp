@@ -151,21 +151,21 @@ int main() {
             exit(1);
         } else if (inputCommand == "translate" && currentWireframe != ""){
             tcsetattr( fileno( stdin ), TCSANOW, &newSettings );
-            cout << "Use IJKL to move " << currentWireframe << " object" << endl;
+            cout << "Use WASD to move " << currentWireframe << " object" << endl;
             cout << "Enter 'x' to finish" << endl;
             while (1){
                 char c;
                 read( fileno( stdin ), &c, 1 );
-                if (c == 'i'){
+                if (c == 'w'){
                     drawer.erase_canvas(wireframes);
                     wireframes.find(currentWireframe)->second.translate(0, -10);
-                } else if (c == 'j'){
+                } else if (c == 'a'){
                     drawer.erase_canvas(wireframes);
                     wireframes.find(currentWireframe)->second.translate(-10, 0);
-                } else if (c == 'k'){
+                } else if (c == 's'){
                     drawer.erase_canvas(wireframes);
                     wireframes.find(currentWireframe)->second.translate(0, 10);
-                } else if (c == 'l'){
+                } else if (c == 'd'){
                     drawer.erase_canvas(wireframes);
                     wireframes.find(currentWireframe)->second.translate(10, 0);
                 } else if(c=='x'){
