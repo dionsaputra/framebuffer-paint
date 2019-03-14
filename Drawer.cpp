@@ -261,3 +261,26 @@ void Drawer::erase_canvas(map<string,Wireframe> canvas, Point disorientasi){
         unfill_wireframe(wireframe);
     } 
 }
+
+void Drawer::draw_letter(Letter letter) {
+    int minX = letter.getStartPoint().getX();
+    int minY = letter.getStartPoint().getY();
+    for (int y = minY; y <= letter.getLimitY(); y++) {
+        for (int x = minX; x <= letter.getLimitX(); x++) {
+            Point point(x,y);
+            if (letter.condition(point)) {
+                draw_point(point, letter.getColor());
+            }
+        }
+    }
+}
+
+void Drawer::draw_word(string word, Point startPoint, int shift, int scale, Color color){
+    int i;
+    for (i=0; i < word.length(); i++) {
+        if(!isspace(word[i])){
+            draw_letter(Letter(word[i], startPoint, scale, color));
+        }
+        startPoint.setX(startPoint.getX() + shift);
+    }
+}

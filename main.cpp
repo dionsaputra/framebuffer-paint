@@ -316,8 +316,13 @@ int main() {
             if(lineStyle == 's' || lineStyle == 'd'){
                 wireframes.find(currentWireframe)->second.setLineStyle(lineStyle);
             }
-            
-            drawer.draw_canvas(wireframes,window,disorientation);
+            drawer.draw_canvas(wireframes,window, disorientation);
+        } else if (inputCommand == "label"){
+            for (auto itr = wireframes.begin(); itr != wireframes.end(); itr++) {
+                String name =  itr->first;
+                Point loc = itr->second.getTopLeft();
+                drawer.draw_word(name, loc, 6, 5, green);
+            }
         } else {
             cout << "Please enter a valid command" << endl;
         }

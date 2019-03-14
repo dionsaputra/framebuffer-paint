@@ -9,7 +9,6 @@
 #include <sys/mman.h>
 #include <sys/ioctl.h>
 #include <ctype.h>
-#include "Drawer.h"
 #include "Point.h"
 #include "Color.h"
 
@@ -21,17 +20,37 @@ using namespace std;
 class Letter {
 private:
     char character;
-    Point point;
+    Point startPoint;
     int scale;
     Color color;
+
 public:
+    // Constructor
     Letter();
+    Letter(char c, Point startPoint, int scale, Color color);
+
+    // Destructor
     ~Letter();
-    Letter(char c, Drawer drawer, Point point, int scale, Color color);
-    void word(char* word, int len, Drawer drawer, Point point, int shift, int scale, Color color);
-    int limit_x(int scale, int pos_x);
-    int limit_y(int scale, int pos_y);
-    int check_pos(struct fb_var_screeninfo vinfo, int x, int y);
+
+    // Setter
+    void setCharacter(char _character);
+    void setStartPoint(Point _point);
+    void setScale(int _scale);
+    void setColor(Color _color);
+
+    void printInfo();
+
+    // Getter
+    char getCharacter();
+    Point getStartPoint();
+    int getScale();
+    Color getColor();
+
+    int getLimitX();
+    int getLimitY();
+
+    // int limit_x(int scale, int pos_x);
+    // int limit_y(int scale, int pos_y);
     int condition_A(int x, int y, int scale, int pos_x, int pos_y);
     int condition_B(int x, int y, int scale, int pos_x, int pos_y);
     int condition_C(int x, int y, int scale, int pos_x, int pos_y);
@@ -67,7 +86,7 @@ public:
     int condition_6(int x, int y, int scale, int pos_x, int pos_y);
     int condition_7(int x, int y, int scale, int pos_x, int pos_y);
     int condition_8(int x, int y, int scale, int pos_x, int pos_y);
-    int condition(int x, int y, int scale, int pos_x, int pos_y);
+    int condition(Point point);
 
 };
 

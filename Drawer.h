@@ -21,6 +21,7 @@
 #include "Point.h"
 #include "Color.h"
 #include "Wireframe.h"
+#include "Letter.h"
 
 class Drawer {
 public:
@@ -72,6 +73,10 @@ public:
     void draw_canvas(map<string,Wireframe> canvas, Wireframe window, Point disorientasi);
 
     void erase_canvas(map<string,Wireframe> canvas, Point disorientasi);
+
+    void draw_letter(Letter letter);
+    
+    void draw_word(string word, Point startPoint, int shift, int scale, Color color);
 };
 
 #endif
