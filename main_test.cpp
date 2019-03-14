@@ -9,6 +9,6 @@ int main() {
     Color green(0, 255, 0);
     Letter A('M', p, 5, green);
     A.printInfo();
-    drawer.draw_letter(A);
+    drawer.draw_word("ILYAS", p, 50, 10, green);
     return 0;
 }

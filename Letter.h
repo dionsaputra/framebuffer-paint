@@ -23,6 +23,7 @@ private:
     Point startPoint;
     int scale;
     Color color;
+
 public:
     // Constructor
     Letter();
@@ -45,8 +46,8 @@ public:
     int getScale();
     Color getColor();
 
-    Point getTopLeft();
-    Point getBottomRight();
+    int getLimitX();
+    int getLimitY();
 
     // int limit_x(int scale, int pos_x);
     // int limit_y(int scale, int pos_y);

@@ -23,19 +23,15 @@ void Letter::printInfo() {
     cout << getCharacter() << endl;
     startPoint.display();
     cout << getScale() << endl;
-    getTopLeft().display();
-    getBottomRight().display();
 }
 
 
-Point Letter::getBottomRight() {
-    Point P(getScale() * GRID_WIDTH + startPoint.getX(), startPoint.getY());
-    return P;
+int Letter::getLimitX() {
+    return startPoint.getX() + scale * GRID_WIDTH;
 }
 
-Point Letter::getTopLeft() {
-    Point P(startPoint.getX(), getScale() * GRID_HEIGHT + startPoint.getY());
-    return P;
+int Letter::getLimitY() {
+    return startPoint.getY() + scale * GRID_HEIGHT;
 }
 
 // int Letter::limit_x(int scale, int pos_x) {
@@ -289,11 +285,11 @@ int Letter::condition_8(int x, int y, int scale, int pos_x, int pos_y) {
 int Letter::condition(Point point) {
     int x = point.getX();
     int y = point.getY();
-    int pos_x = getTopLeft().getX();
-    int pos_y = getTopLeft().getY();
+    int pos_x = startPoint.getX();
+    int pos_y = startPoint.getY();
     char c = getCharacter();
     switch (c) {
-        case 'A': cout << "Enter A" << endl; return condition_A(x,y,scale,pos_x,pos_y);
+        case 'A': return condition_A(x,y,scale,pos_x,pos_y);
         case 'B': return condition_B(x,y,scale,pos_x,pos_y);
         case 'C': return condition_C(x,y,scale,pos_x,pos_y);
         case 'D': return condition_D(x,y,scale,pos_x,pos_y);
