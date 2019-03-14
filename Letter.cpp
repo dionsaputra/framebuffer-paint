@@ -146,15 +146,16 @@ int Letter::condition_P(int x, int y, int scale, int pos_x, int pos_y){
     return  y <= scale || scale*2 <= y && y <= scale*3 || x <= scale || x >= scale*4 && y <= scale*3;
 }
 
+int Letter::condition_R(int x, int y, int scale, int pos_x, int pos_y)
+{
+    x -= pos_x;
+    y -= pos_y;
+    return x <= scale || y <= scale || scale * 2 <= y && y <= scale * 3 || x >= scale * 4 && y <= scale * 3 || scale * 3 <= x && x <= scale * 4 && scale * 3 <= y && y <= scale * 4 || scale * 4 <= x && scale * 4 <= y;
+}
+
 int Letter::condition_S(int x, int y, int scale, int pos_x, int pos_y){ 
     x -= pos_x; y -= pos_y;
     return y <= scale || scale*2 <= y && y <= scale*3 || y >= scale*4 || x <= scale && scale <= y && y <= scale*2 || x >= scale*4 && scale*3 <= y && y <= scale*4;
-}
-
-int Letter::condition_R(int x, int y, int scale, int pos_x, int pos_y){ 
-    x -= pos_x;
-    y -= pos_y;
-    return x <= scale || y <= scale || scale*2 <= y && y <= scale*3 || x >= scale*4 && y <= scale*3 || scale*3 <= x && x <= scale*4 && scale*3 <= y && y <= scale*4 || scale*4 <= x && scale*4 <= y;
 }
 
 int Letter::condition_T(int x, int y, int scale, int pos_x, int pos_y) {

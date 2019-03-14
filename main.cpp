@@ -19,6 +19,7 @@
 #include "Parser.h"
 #include "Wireframe.h"
 #include "PaintController.h"
+#include "Letter.h"
 using namespace std;
 
 
