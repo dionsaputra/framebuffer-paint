@@ -230,13 +230,15 @@ Wireframe Wireframe::clippingResult(Wireframe window) {
         return Wireframe();
     }
     
-    Wireframe clippingWireframe;
-    clippingWireframe.setPoints(points);
+    Wireframe clippingWireframe = *this;
 
     for (int areaCode=0; areaCode<4; areaCode++) {
         partialClipping(&clippingWireframe, window, areaCode);
     }
 
+    // for (int i=0;i<clippingWs
+    clippingWireframe.updateEnvelope();
+    clippingWireframe.updateInnerPoint();
     return clippingWireframe;  
 }
 
@@ -263,11 +265,7 @@ void Wireframe::partialClipping(Wireframe* wireframe, Wireframe window, int area
         }
     }
 
-    wireframe->setInnerPoint(innerPoint);
     wireframe->setPoints(clippingPoints);
-    wireframe->setBorderColor(borderColor);
-    wireframe->setFillColor(fillColor);
-    wireframe->setPriority(priority);
 }
 
 Point Wireframe::intersect(Point inside, Point outside, Wireframe window) {
