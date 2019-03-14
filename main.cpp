@@ -39,6 +39,7 @@ Wireframe verticalScrollBar;
 Wireframe horizontalScrollBarBorder;
 Wireframe verticalScrollBarBorder;
 Wireframe statusBar;
+Point disorientation;
 
 Wireframe createRectangle(Point topLeft, Point bottomRight) {
     vector<Point> points;
@@ -57,6 +58,7 @@ void setupWindow() {
     int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
     window = createRectangle(Point(250,50), Point(xres-50, yres-50));
     window.setBorderColor(Color(0,250,0));
+    disorientation = window.getTopLeft();
     drawer.draw_wireframe(window);
 }
 
@@ -112,7 +114,7 @@ int main() {
     cout << "filename : ";
     cin >> filename;
     wireframes = controller.load(filename);
-    drawer.draw_canvas(wireframes, window);
+    drawer.draw_canvas(wireframes, window, disorientation);
     // drawer.drawLineWidth(Point(100, 100), Point(200, 200), 2, Color(123, 32, 231));
     // drawer.drawLineWidth(Point(200, 100), Point(300, 200), 10, Color(123, 32, 231));
 
@@ -134,7 +136,7 @@ int main() {
         cin >> inputCommand;
 
         if(inputCommand == "select"){
-            cout << "=----list----" << endl;
+            cout << "----list----" << endl;
             for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
                 if (currentWireframe == itr->first){
                     cout << itr->first << " Selected" << endl;
@@ -184,16 +186,16 @@ int main() {
                 char c;
                 read( fileno( stdin ), &c, 1 );
                 if (c == 'w'){
-                    drawer.erase_canvas(wireframes);
+                    drawer.erase_canvas(wireframes,disorientation);
                     wireframes.find(currentWireframe)->second.translate(0, -10);
                 } else if (c == 'a'){
-                    drawer.erase_canvas(wireframes);
+                    drawer.erase_canvas(wireframes,disorientation);
                     wireframes.find(currentWireframe)->second.translate(-10, 0);
                 } else if (c == 's'){
-                    drawer.erase_canvas(wireframes);
+                    drawer.erase_canvas(wireframes,disorientation);
                     wireframes.find(currentWireframe)->second.translate(0, 10);
                 } else if (c == 'd'){
-                    drawer.erase_canvas(wireframes);
+                    drawer.erase_canvas(wireframes,disorientation);
                     wireframes.find(currentWireframe)->second.translate(10, 0);
                 } else if(c=='x'){
                     // Change settings
@@ -201,7 +203,7 @@ int main() {
                     break;
                 }
 
-                drawer.draw_canvas(wireframes,window);
+                drawer.draw_canvas(wireframes,window,disorientation);
             }
         } else if (inputCommand == "rotate" && currentWireframe != ""){
             tcsetattr( fileno( stdin ), TCSANOW, &newSettings );
@@ -212,10 +214,10 @@ int main() {
                 char c;
                 read( fileno( stdin ), &c, 1 );
                 if (c == 'o'){
-                    drawer.erase_canvas(wireframes);
+                    drawer.erase_canvas(wireframes,disorientation);
                     wireframes.find(currentWireframe)->second.rotate(-10);
                 } else if (c == 'p'){
-                    drawer.erase_canvas(wireframes);
+                    drawer.erase_canvas(wireframes,disorientation);
                     wireframes.find(currentWireframe)->second.rotate(10);
                 } else if(c=='x'){
                     // Change settings
@@ -223,7 +225,7 @@ int main() {
                     break;
                 }
 
-                drawer.draw_canvas(wireframes,window);
+                drawer.draw_canvas(wireframes,window,disorientation);
             }
         } else if (inputCommand == "scale" && currentWireframe != "") {
             tcsetattr( fileno( stdin ), TCSANOW, &newSettings );
@@ -234,10 +236,10 @@ int main() {
                 char c;
                 read( fileno( stdin ), &c, 1 );
                 if (c == '='){
-                    drawer.erase_canvas(wireframes);
+                    drawer.erase_canvas(wireframes,disorientation);
                     wireframes.find(currentWireframe)->second.scale(1.15);
                 } else if (c == '-'){
-                    drawer.erase_canvas(wireframes);
+                    drawer.erase_canvas(wireframes,disorientation);
                     wireframes.find(currentWireframe)->second.scale(0.75);
                 } else if(c=='x'){
                     // Change settings
@@ -245,17 +247,16 @@ int main() {
                     break;
                 }
 
-            drawer.draw_canvas(wireframes,window);
+            drawer.draw_canvas(wireframes,window,disorientation);
             }
         } else if (inputCommand == "fill" && currentWireframe != "") {
             int red, green, blue;
             cout << "fill color (r g b): ";
             cin >> red >> green >> blue;
             
-            drawer.erase_canvas(wireframes);
+            drawer.erase_canvas(wireframes,disorientation);
             wireframes.find(currentWireframe)->second.setFillColor(Color(red, green, blue));
-            
-            drawer.draw_canvas(wireframes,window);
+            drawer.draw_canvas(wireframes,window,disorientation);
         } else if(inputCommand == "create"){
             int radius, nPoint, xCenter, yCenter, red, green, boy;
             string nameShape;
@@ -273,7 +274,7 @@ int main() {
 
             Wireframe wireframe(radius, nPoint, Point(xCenter, yCenter), Color(red, green, boy));
             wireframes.insert(pair<string, Wireframe>(nameShape, wireframe));
-            drawer.draw_canvas(wireframes,window);
+            drawer.draw_canvas(wireframes,window,disorientation);
         } else if (inputCommand == "edit-line" && currentWireframe != "") {
             float thickness;
             char lineStyle;
@@ -283,7 +284,7 @@ int main() {
             cout << "line style (d/s): ";
             cin >> lineStyle;
             
-            drawer.erase_canvas(wireframes);
+            drawer.erase_canvas(wireframes,disorientation);
             if(thickness >= 1.0f){
                 // cout << "before " << wireframes.find(currentWireframe)->second.getThickness() << thickness << endl;
                 wireframes.find(currentWireframe)->second.setThickness(thickness);
@@ -293,7 +294,7 @@ int main() {
             if(lineStyle == 's' || lineStyle == 'd'){
                 wireframes.find(currentWireframe)->second.setLineStyle(lineStyle);
             }
-            drawer.draw_canvas(wireframes,window);
+            drawer.draw_canvas(wireframes,window, disorientation);
         } else if (inputCommand == "label"){
             for (auto itr = wireframes.begin(); itr != wireframes.end(); itr++) {
                 String name =  itr->first;
