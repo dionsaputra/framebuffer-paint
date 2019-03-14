@@ -19,6 +19,7 @@
 #include "Parser.h"
 #include "Wireframe.h"
 #include "PaintController.h"
+#include "Letter.h"
 using namespace std;
 
 
@@ -268,11 +269,32 @@ int main() {
             cin >> radius;
             cout << "number of point: ";
             cin >> nPoint;
-            cout << "color (r g b):";
+            cout << "color (r g b): ";
             cin >> red >> green >> boy;
 
             Wireframe wireframe(radius, nPoint, Point(xCenter, yCenter), Color(red, green, boy));
             wireframes.insert(pair<string, Wireframe>(nameShape, wireframe));
+            drawer.draw_canvas(wireframes,window,disorientation);
+        } else if (inputCommand == "edit-line" && currentWireframe != "") {
+            float thickness;
+            char lineStyle;
+
+            cout << "thickness: ";
+            cin >> thickness;
+            cout << "line style (d/s): ";
+            cin >> lineStyle;
+            
+            drawer.erase_canvas(wireframes,disorientation);
+            if(thickness >= 1.0f){
+                // cout << "before " << wireframes.find(currentWireframe)->second.getThickness() << thickness << endl;
+                wireframes.find(currentWireframe)->second.setThickness(thickness);
+                // cout << "after " << wireframes.find(currentWireframe)->second.getThickness() << endl;
+            }   
+
+            if(lineStyle == 's' || lineStyle == 'd'){
+                wireframes.find(currentWireframe)->second.setLineStyle(lineStyle);
+            }
+            
             drawer.draw_canvas(wireframes,window,disorientation);
         } else {
             cout << "Please enter a valid command" << endl;
