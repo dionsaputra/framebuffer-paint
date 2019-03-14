@@ -112,6 +112,8 @@ int main() {
     cin >> filename;
     wireframes = controller.load(filename);
     drawer.draw_canvas(wireframes, window);
+    // drawer.drawLineWidth(Point(100, 100), Point(200, 200), 2, Color(123, 32, 231));
+    // drawer.drawLineWidth(Point(200, 100), Point(300, 200), 10, Color(123, 32, 231));
 
     // Setup input mode
     struct termios oldSettings, newSettings;
@@ -242,8 +244,16 @@ int main() {
                     break;
                 }
 
-                drawer.draw_canvas(wireframes,window);
+            drawer.draw_canvas(wireframes,window);
             }
+        } else if (inputCommand == "fill" && currentWireframe != "") {
+            int red, green, blue;
+            cout << "fill color (r g b): ";
+            cin >> red >> green >> blue;
+            
+            drawer.erase_canvas(wireframes);
+            wireframes.find(currentWireframe)->second.setFillColor(Color(red, green, blue));
+            drawer.draw_canvas(wireframes,window);
         } else if(inputCommand == "create"){
             int radius, nPoint, xCenter, yCenter, red, green, boy;
             string nameShape;
