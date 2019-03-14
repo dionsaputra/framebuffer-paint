@@ -127,6 +127,10 @@ void Drawer::drawLineWidth(Point pointStart, Point pointEnd, float wd, Color col
     int y0 = pointStart.getY();
     int y1 = pointEnd.getY();
 
+    if(y0 == y1 && x0 < x1){
+        x0 -= (wd/2);
+    }
+
     int dx = abs(x1-x0), sx = x0 < x1 ? 1 : -1; 
     int dy = abs(y1-y0), sy = y0 < y1 ? 1 : -1; 
     int err = dx-dy, e2, x2, y2;                          /* error value e_xy */
@@ -135,19 +139,16 @@ void Drawer::drawLineWidth(Point pointStart, Point pointEnd, float wd, Color col
     /* pixel loop */
     for (wd = (wd+1)/2; ; ) {            
         draw_point(Point(x0,y0), color);
-        // setPixelColor(x0,y0,max(0,255*(abs(err-dx+dy)/ed-wd+1)));
         e2 = err; x2 = x0;
         if (2*e2 >= -dx) {                                           /* x step */
             for (e2 += dy, y2 = y0; e2 < ed*wd && (y1 != y2 || dx > dy); e2 += dx)
                 draw_point(Point(x0,y2 += sy), color);
-                // setPixelColor(x0, y2 += sy, max(0,255*(abs(e2)/ed-wd+1)));
             if (x0 == x1) break;
             e2 = err; err -= dy; x0 += sx; 
         } 
         if (2*e2 <= dy) {                                            /* y step */
             for (e2 = dx-e2; e2 < ed*wd && (x1 != x2 || dx < dy); e2 += dy)
                 draw_point(Point(x2 += sx,y0), color);
-                // setPixelColor(x2 += sx, y0, max(0,255*(abs(e2)/ed-wd+1)));
             if (y0 == y1) break;
             err += dx; y0 += sy; 
         }
@@ -174,15 +175,15 @@ void Drawer::erase_point(Point point) {
 void Drawer::draw_wireframe(Wireframe wireframe) {
     int pointsSize = wireframe.getPoints().size();
     for (int i=1; i<=pointsSize; i++) {
-        drawLine(wireframe.getPoints()[(i-1)%pointsSize], wireframe.getPoints()[i%pointsSize], wireframe.getBorderColor());
-        // drawLineWidth(wireframe.getPoints()[(i-1)%pointsSize], wireframe.getPoints()[i%pointsSize], 10,wireframe.getBorderColor()); 
+        // drawLine(wireframe.getPoints()[(i-1)%pointsSize], wireframe.getPoints()[i%pointsSize], wireframe.getBorderColor());
+        drawLineWidth(wireframe.getPoints()[(i-1)%pointsSize], wireframe.getPoints()[i%pointsSize], wireframe.getThickness(), wireframe.getBorderColor()); 
     }
 }
 
 void Drawer::erase_wireframe(Wireframe wireframe) {
     int pointsSize = wireframe.getPoints().size();
     for (int i=1; i<=pointsSize; i++) {
-        drawLine(wireframe.getPoints()[(i-1)%pointsSize], wireframe.getPoints()[i%pointsSize], Color::background()); 
+        drawLineWidth(wireframe.getPoints()[(i-1)%pointsSize], wireframe.getPoints()[i%pointsSize], wireframe.getThickness() ,Color::background()); 
     }
 }
 

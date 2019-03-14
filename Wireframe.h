@@ -14,13 +14,16 @@ private:
     Color fillColor;
     Color borderColor;
     vector<Point> points;
+    char lineStyle;
     int priority;
+    float thickness;
 
 public:
     Wireframe();
     Wireframe(vector<Point> _controlPoint, Color _borderColor);
     Wireframe(vector<Point> _controlPoint, Point innerPoint);
     Wireframe(vector<Point> _controlPoint, Point _innerPoint, Color _borderColor, Color _colorFill, int _priority);
+    Wireframe(vector<Point> _controlPoint, Point _innerPoint, Color _borderColor, Color _colorFill, int _priority, float _thickness, char _lineStyle);
     Wireframe(int radius, int numPoint, Point centerPoint, Color color);
     // ~Wireframe();
 
@@ -42,6 +45,9 @@ public:
     Color getFillColor();
     Color getBorderColor();
     int getPriority();
+    float getThickness();
+    char getLineStyle();
+    string getLineStyleString();
 
     //setter
     void setPoints(vector<Point> points);
@@ -51,6 +57,8 @@ public:
     void setFillColor(Color _color);
     void setBorderColor(Color _color);
     void setPriority(int _priority);
+    void setThickness(float _thickness);
+    void setLineStyle(char _lineStyle);
 
     bool isInEnvelope(Point point);
     void updateInnerPoint();
