@@ -36,8 +36,14 @@ map<string, Wireframe> PaintController::load(string filename) {
 
                 // priority
                 int priority = stoi(vec[5]);
+
+                // thickness
+                float thickness = stof(vec[6]);
+
+                // line style
+                char lineStyle = vec[7][0];
                 
-                Wireframe wireframe(points, innerPoint,borderColor,fillColor,priority);
+                Wireframe wireframe(points, innerPoint,borderColor,fillColor,priority, thickness, lineStyle);
                 wireframes.insert(pair<string,Wireframe>(vec[0],wireframe));
             }
         }
@@ -79,7 +85,15 @@ void PaintController::save(map<string, Wireframe> map, string filename) {
 
         // priority
         file << itr->second.getPriority();
-        
+        file << "|";
+
+        // thickness
+        file << itr->second.getThickness();
+        file << "|";
+
+        // line style
+        file << itr->second.getLineStyle();
+
         file << endl;
     }
 }
