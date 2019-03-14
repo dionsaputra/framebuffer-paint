@@ -253,6 +253,7 @@ int main() {
             
             drawer.erase_canvas(wireframes);
             wireframes.find(currentWireframe)->second.setFillColor(Color(red, green, blue));
+            
             drawer.draw_canvas(wireframes,window);
         } else if(inputCommand == "create"){
             int radius, nPoint, xCenter, yCenter, red, green, boy;
@@ -266,7 +267,7 @@ int main() {
             cin >> radius;
             cout << "number of point: ";
             cin >> nPoint;
-            cout << "color (r g b):";
+            cout << "color (r g b): ";
             cin >> red >> green >> boy;
 
             Wireframe wireframe(radius, nPoint, Point(xCenter, yCenter), Color(red, green, boy));

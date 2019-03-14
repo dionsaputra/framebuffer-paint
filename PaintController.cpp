@@ -18,13 +18,13 @@ map<string, Wireframe> PaintController::load(string filename) {
                 vector<string> strPoints = parser.split(vec[1]," ");
                 for (int i=0; i<strPoints.size(); i++) {
                     vector<string> strXY = parser.split(strPoints[i].substr(1,strPoints[i].length()-2),",");
-                    Point point(stoi(strXY[0]) * 10, stoi(strXY[1]) * 10);
+                    Point point(stoi(strXY[0]), stoi(strXY[1]));
                     points.push_back(point);
                 }
 
                 // inner point
                 vector<string>strXY = parser.split(vec[2].substr(1,vec[2].length()-2),",");
-                Point innerPoint(stoi(strXY[0]) * 10, stoi(strXY[1]) * 10);
+                Point innerPoint(stoi(strXY[0]), stoi(strXY[1]));
 
                 // borderColor
                 vector<string> borderColorRGB = parser.split(vec[3].substr(1,vec[3].length()-2),",");
@@ -63,14 +63,14 @@ void PaintController::save(map<string, Wireframe> map, string filename) {
         // control point
         vector<Point> points = itr->second.getPoints(); 
         for(int i=0; i<points.size();i++){
-            file << "(" << points[i].getX()/10 << "," << points[i].getY()/10 << ")";
+            file << "(" << points[i].getX() << "," << points[i].getY() << ")";
             if (i!=points.size()-1) file << " ";
         }
         file << "|";
 
         // inner point
         Point innerPoint = itr->second.getInnerPoint();
-        file << "(" << innerPoint.getX()/10 << "," << innerPoint.getY()/10 << ")";
+        file << "(" << innerPoint.getX() << "," << innerPoint.getY() << ")";
         file << "|";
         
         // border color
