@@ -201,6 +201,7 @@ void Drawer::unfill_wireframe(Wireframe wireframe){
 void Drawer::queueFloodFill(Wireframe wireframe) {
     Point startPoint = wireframe.getInnerPoint();
     Color fillColor = wireframe.getFillColor();
+    Color borderColor = wireframe.getBorderColor();
     draw_point(startPoint, fillColor);
     queue<Point> pointQueue;
     pointQueue.push(startPoint);
@@ -216,25 +217,25 @@ void Drawer::queueFloodFill(Wireframe wireframe) {
         Point bottom = nextPoint.getBottom();
 
         // getColor(left).display();
-        if (wireframe.isInEnvelope(left) && getColor(left).isEqual(Color::background())) {
+        if (wireframe.isInEnvelope(left) && !getColor(left).isEqual(borderColor) && !getColor(left).isEqual(fillColor)) {
             draw_point(left, fillColor);
             // cout<<"insert left"<<endl;
             pointQueue.push(left);
         }
 
-        if (wireframe.isInEnvelope(right) && getColor(right).isEqual(Color::background())) {
+        if (wireframe.isInEnvelope(right) && !getColor(right).isEqual(borderColor) && !getColor(right).isEqual(fillColor)) {
             draw_point(right, fillColor);
             // cout<<"insert right"<<endl;
             pointQueue.push(right);
         }
 
-        if (wireframe.isInEnvelope(top) && getColor(top).isEqual(Color::background())) {
+        if (wireframe.isInEnvelope(top) && !getColor(top).isEqual(borderColor) && !getColor(top).isEqual(fillColor)) {
             draw_point(top, fillColor);
             // cout<<"insert top"<<endl;
             pointQueue.push(top);
         }
 
-        if (wireframe.isInEnvelope(bottom) && getColor(bottom).isEqual(Color::background())) {
+        if (wireframe.isInEnvelope(bottom) && !getColor(bottom).isEqual(borderColor) && !getColor(bottom).isEqual(fillColor)) {
             draw_point(bottom, fillColor);
             // cout<<"insert bottom"<<endl;
             pointQueue.push(bottom);
@@ -242,16 +243,20 @@ void Drawer::queueFloodFill(Wireframe wireframe) {
     }
 }
 
-void Drawer::draw_canvas(map<string,Wireframe> canvas, Wireframe window){
+void Drawer::draw_canvas(map<string,Wireframe> canvas, Wireframe window, Point disorientasi){
     for (auto itr=canvas.begin(); itr!=canvas.end();itr++){
-        draw_wireframe((itr->second).clippingResult(window));
-        queueFloodFill((itr->second).clippingResult(window));
+        Wireframe wireframe = itr->second;
+        wireframe.translate(disorientasi.getX(),disorientasi.getY());
+        draw_wireframe(wireframe.clippingResult(window));
+        queueFloodFill(wireframe.clippingResult(window));
     }
 }
 
-void Drawer::erase_canvas(map<string,Wireframe> canvas){
+void Drawer::erase_canvas(map<string,Wireframe> canvas, Point disorientasi){
     for (auto itr=canvas.begin(); itr!=canvas.end();itr++){
-        erase_wireframe(itr->second);
-        unfill_wireframe(itr->second);
+        Wireframe wireframe = itr->second;
+        wireframe.translate(disorientasi.getX(),disorientasi.getY());
+        erase_wireframe(wireframe);
+        unfill_wireframe(wireframe);
     } 
 }

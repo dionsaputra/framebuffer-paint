@@ -69,9 +69,9 @@ public:
 
     void queueFloodFill(Wireframe wireframe);
 
-    void draw_canvas(map<string,Wireframe> canvas, Wireframe window);
+    void draw_canvas(map<string,Wireframe> canvas, Wireframe window, Point disorientasi);
 
-    void erase_canvas(map<string,Wireframe> canvas);
+    void erase_canvas(map<string,Wireframe> canvas, Point disorientasi);
 };
 
 #endif
