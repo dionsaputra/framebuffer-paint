@@ -35,6 +35,8 @@ map<string,Wireframe> wireframes;
 Wireframe window;
 Wireframe horizontalScrollBar;
 Wireframe verticalScrollBar;
+Wireframe horizontalScrollBarBorder;
+Wireframe verticalScrollBarBorder;
 Wireframe statusBar;
 
 Wireframe createRectangle(Point topLeft, Point bottomRight) {
@@ -57,24 +59,46 @@ void setupWindow() {
     drawer.draw_wireframe(window);
 }
 
+void setupHorizontalScrollBarBorder() {
+    int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
+    horizontalScrollBarBorder = createRectangle(Point(250,yres-50), Point(xres-50, yres-30));
+    horizontalScrollBarBorder.setBorderColor(Color(0,250,0));
+    drawer.draw_wireframe(horizontalScrollBarBorder);
+}
+
+void setupVerticalScrollBarBorder() {
+    int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
+    verticalScrollBarBorder = createRectangle(Point(xres-50,50), Point(xres-30, yres-50));
+    verticalScrollBarBorder.setBorderColor(Color(0,250,0));
+    drawer.draw_wireframe(verticalScrollBarBorder);
+}
+
 void setupHorizontalScrollBar() {
     int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
-    horizontalScrollBar = createRectangle(Point(250,yres-50), Point(xres-50, yres-30));
+    horizontalScrollBar = createRectangle(Point(250,yres-50), Point(350, yres-30));
     horizontalScrollBar.setBorderColor(Color(0,250,0));
+    horizontalScrollBar.setFillColor(Color(0,250,0));
+    horizontalScrollBar.setInnerPoint(Point(300, yres-40));
     drawer.draw_wireframe(horizontalScrollBar);
+    drawer.queueFloodFill(horizontalScrollBar);
 }
 
 void setupVerticalScrollBar() {
     int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
-    verticalScrollBar = createRectangle(Point(xres-50,50), Point(xres-30, yres-50));
+    verticalScrollBar = createRectangle(Point(xres-50,50), Point(xres-30, 150));
     verticalScrollBar.setBorderColor(Color(0,250,0));
+    verticalScrollBar.setFillColor(Color(0,250,0));
+    verticalScrollBar.setInnerPoint(Point(xres-40, 100));
     drawer.draw_wireframe(verticalScrollBar);
+    drawer.queueFloodFill(verticalScrollBar);
 }
 
 void setup() {
     setupWindow();
-    setupHorizontalScrollBar();
+    setupHorizontalScrollBarBorder();
+    setupVerticalScrollBarBorder();
     setupVerticalScrollBar();
+    setupHorizontalScrollBar();
 }
 
 int main() {    
@@ -179,24 +203,49 @@ int main() {
                 drawer.draw_canvas(wireframes,window);
             }
         } else if (inputCommand == "rotate" && currentWireframe != ""){
-            int degree;
-            cout << "degree: ";
-            cin >> degree;
+            tcsetattr( fileno( stdin ), TCSANOW, &newSettings );
+            cout << "Use 'p' rotate clockwise " << currentWireframe << " object" << endl;
+            cout << "Use 'o' rotate counter clockwise " << currentWireframe << " object" << endl;
+            cout << "Enter 'x' to finish" << endl;
+            while (1){
+                char c;
+                read( fileno( stdin ), &c, 1 );
+                if (c == 'o'){
+                    drawer.erase_canvas(wireframes);
+                    wireframes.find(currentWireframe)->second.rotate(-10);
+                } else if (c == 'p'){
+                    drawer.erase_canvas(wireframes);
+                    wireframes.find(currentWireframe)->second.rotate(10);
+                } else if(c=='x'){
+                    // Change settings
+                    tcsetattr( fileno( stdin ), TCSANOW, &oldSettings );    
+                    break;
+                }
 
-            drawer.erase_canvas(wireframes);
-
-            wireframes.find(currentWireframe)->second.rotate(degree);
-            drawer.draw_canvas(wireframes,window);
+                drawer.draw_canvas(wireframes,window);
+            }
         } else if (inputCommand == "scale" && currentWireframe != "") {
-            float scale;
-            // scanf("%f", &scale);
-            cin >> scale;
-            cout << scale << endl;
+            tcsetattr( fileno( stdin ), TCSANOW, &newSettings );
+            cout << "Use '=' to scale up " << currentWireframe << " object" << endl;
+            cout << "Use '-' to scale down " << currentWireframe << " object" << endl;
+            cout << "Enter 'x' to finish" << endl;
+            while (1){
+                char c;
+                read( fileno( stdin ), &c, 1 );
+                if (c == '='){
+                    drawer.erase_canvas(wireframes);
+                    wireframes.find(currentWireframe)->second.scale(1.15);
+                } else if (c == '-'){
+                    drawer.erase_canvas(wireframes);
+                    wireframes.find(currentWireframe)->second.scale(0.75);
+                } else if(c=='x'){
+                    // Change settings
+                    tcsetattr( fileno( stdin ), TCSANOW, &oldSettings);    
+                    break;
+                }
 
-            drawer.erase_canvas(wireframes);
-
-            wireframes.find(currentWireframe)->second.scale(scale);
             drawer.draw_canvas(wireframes,window);
+            }
         } else if (inputCommand == "fill" && currentWireframe != "") {
             int red, green, blue;
             cout << "fill color (r g b): ";
