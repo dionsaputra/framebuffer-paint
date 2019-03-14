@@ -64,6 +64,8 @@ Wireframe::Wireframe(int radius, int numPoint, Point centerPoint, Color color) {
     }
     points = controlPoint;
     borderColor = color;
+    updateEnvelope();
+    updateInnerPoint();
 }
 
 void Wireframe::translate(int dx, int dy){
@@ -228,35 +230,42 @@ Wireframe Wireframe::clippingResult(Wireframe window) {
         return Wireframe();
     }
     
-    vector<Point> clippingPoints;
-    int pointsSize = points.size();
-    for (int i=1; i<=pointsSize; i++) {
-        Point previous = points[(i-1)%pointsSize];
-        Point current = points[i%pointsSize];
+    Wireframe clippingWireframe = *this;
 
-        if (isInClip(previous, window) && isInClip(current, window)) {
+    for (int areaCode=0; areaCode<4; areaCode++) {
+        partialClipping(&clippingWireframe, window, areaCode);
+    }
+
+    // for (int i=0;i<clippingWs
+    clippingWireframe.updateEnvelope();
+    clippingWireframe.updateInnerPoint();
+    return clippingWireframe;  
+}
+
+void Wireframe::partialClipping(Wireframe* wireframe, Wireframe window, int areaCode) {
+    if (wireframe->getPoints().size() < 2) {
+        return;
+    }
+
+    vector<Point> points = wireframe->getPoints();
+    vector<Point> clippingPoints;
+    int size = points.size();
+
+    for (int i=1; i<=size; i++) {
+        Point previous = points[(i-1)%size];
+        Point current = points[i%size];
+
+        if (isInClip(previous, window, areaCode) && isInClip(current, window, areaCode)) {
             clippingPoints.push_back(current);
-        } else if (isInClip(previous, window) && !isInClip(current, window)) {
+        } else if (isInClip(previous, window, areaCode) && !isInClip(current, window, areaCode)) {
             clippingPoints.push_back(intersect(previous, current, window));
-        } else if (!isInClip(previous, window) && isInClip(current, window)) {
+        } else if (!isInClip(previous, window, areaCode) && isInClip(current, window, areaCode)) {
             clippingPoints.push_back(intersect(current, previous, window));
             clippingPoints.push_back(current);
         }
     }
 
-    if (clippingPoints.size() == 0) {
-        return Wireframe();
-    } else {
-        Wireframe wireframe(clippingPoints, innerPoint);
-        // cout << clippingPoints.size();
-        wireframe.setBorderColor(borderColor);
-        wireframe.setFillColor(fillColor);
-        wireframe.setPriority(priority);
-        wireframe.setThickness(thickness);
-        wireframe.setLineStyle(lineStyle);
-
-        return wireframe;
-    }
+    wireframe->setPoints(clippingPoints);
 }
 
 Point Wireframe::intersect(Point inside, Point outside, Wireframe window) {
@@ -320,11 +329,20 @@ Point Wireframe::intersect(Point inside, Point outside, Wireframe window) {
     
 }
 
-bool Wireframe::isInClip(Point point, Wireframe window) {
-    int xMin = window.topLeft.getX(), xMax = window.bottomRight.getX();
-    int yMin = window.topLeft.getY(), yMax = window.bottomRight.getY();
+bool Wireframe::isInClip(Point point, Wireframe window, int areaCode) {
+    // if (areaCode > 0) exit(1);
 
-    return xMin <= point.getX() && point.getX() <= xMax && yMin <= point.getY() && point.getY() <= yMax;
+    // window.getBottomRight().display();
+    // point.display();
+    // cout<<"value: "<<window.getBottomRight().isRight(point);
+
+    switch (areaCode){
+        case 0: return window.getBottomRight().isRight(point);
+        case 1: return window.getTopLeft().isLeft(point);
+        case 2: return window.getTopLeft().isTop(point);
+        case 3: return window.getBottomRight().isBottom(point);
+        default: return false;
+    }
 }
 
 void Wireframe::updateInnerPoint(){
