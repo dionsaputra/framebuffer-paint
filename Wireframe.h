@@ -64,7 +64,8 @@ public:
     void updateInnerPoint();
 
     Wireframe clippingResult(Wireframe window);
-    bool isInClip(Point point, Wireframe window);
+    void partialClipping(Wireframe* wireframe, Wireframe window, int areaCode);
+    bool isInClip(Point point, Wireframe window, int areaCode);
     Point intersect(Point inside, Point outside, Wireframe window);
 };
 

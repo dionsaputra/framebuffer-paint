@@ -41,5 +41,9 @@ public:
     Point getTop();
     Point getBottom();
 
+    bool isLeft(Point point);
+    bool isRight(Point point);
+    bool isTop(Point point);
+    bool isBottom(Point point);
 };
 #endif
