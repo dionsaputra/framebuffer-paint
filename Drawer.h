@@ -74,7 +74,7 @@ public:
 
     void erase_canvas(map<string,Wireframe> canvas, Point disorientasi);
 
-    void draw_letter(Letter letter)
+    void draw_letter(Letter letter);
 };
 
 #endif
