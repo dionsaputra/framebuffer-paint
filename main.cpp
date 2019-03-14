@@ -98,6 +98,8 @@ int main() {
     cin >> filename;
     wireframes = controller.load(filename);
     drawer.draw_canvas(wireframes, window);
+    // drawer.drawLineWidth(Point(100, 100), Point(200, 200), 2, Color(123, 32, 231));
+    // drawer.drawLineWidth(Point(200, 100), Point(300, 200), 10, Color(123, 32, 231));
 
     // Setup input mode
     struct termios oldSettings, newSettings;

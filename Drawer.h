@@ -50,7 +50,9 @@ public:
     void draw_point(Point point, Color color);
 
     void drawLine(Point start, Point end, Color color);
-        
+
+    void drawLineWidth(Point pointStart, Point pointEnd, float wd, Color color);
+            
     /*** Return the color of point in screen by reading framebuffer or background color if its outside screen ***/
     Color getColor(Point point);
     
