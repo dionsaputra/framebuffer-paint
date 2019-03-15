@@ -208,6 +208,14 @@ int Letter::condition_U(int x, int y, int scale, int pos_x, int pos_y){
     return x <= scale || x >= scale*4 || y >= scale*4;
 }
 
+int Letter::condition_V(int x, int y, int scale, int pos_x, int pos_y){ 
+    x -= pos_x; y -= pos_y;
+    bool cond_1 = ((x <= scale || x >= scale*4) && y <= scale*3);
+    bool cond_2 = (((x >= scale && x <= scale*2) || (x >= scale*3 && x <= scale*4)) && (y >= scale*3 && y <= scale*4));
+    bool cond_3 = y >= scale*4 && (x <= scale*3 && x >= scale*2);
+    return  cond_1 || cond_2 || cond_3;
+}
+
 int Letter::condition_Y(int x, int y, int scale, int pos_x, int pos_y) {
     int cond_x_1 = scale*1 + pos_x,
     cond_x_2 = scale*2 + pos_x,
@@ -221,6 +229,14 @@ int Letter::condition_Y(int x, int y, int scale, int pos_x, int pos_y) {
     return (y <= cond_y_1 && (x <= cond_x_1 || x >= cond_x_4)) || 
     (y >= cond_y_1 && y <= cond_y_2 && ((x >= cond_x_1 && x <= cond_x_2) || (x >= cond_x_3 && x <= cond_x_4)) ||
     (y >= cond_y_2 && x >= cond_x_2 && x <= cond_x_3));
+}
+
+int Letter::condition_X(int x, int y, int scale, int pos_x, int pos_y){ 
+    x -= pos_x; y -= pos_y;
+    bool cond_1 = (x <= scale || x >= scale*4) && (y <= scale || y >= scale*4);
+    bool cond_2 = (((x >= scale && x <= scale*2) || (x >= scale*3 && x <= scale*4)) && ((y >= scale && y <= scale*2) || (y >= scale*3 && y <= scale*4)));
+    bool cond_3 = (y >= scale*2 && y <= scale*3 ) && (x <= scale*3 && x >= scale*2);
+    return  cond_1 || cond_2 || cond_3;
 }
 
 int Letter::condition_Z(int x, int y, int scale, int pos_x, int pos_y) {
@@ -308,7 +324,9 @@ int Letter::condition(Point point) {
         case 'R': return condition_R(x,y,scale,pos_x,pos_y);
         case 'T': return condition_T(x,y,scale,pos_x,pos_y);
         case 'U': return condition_U(x,y,scale,pos_x,pos_y);
+        case 'V': return condition_V(x,y,scale,pos_x,pos_y);
         case 'Y': return condition_Y(x,y,scale,pos_x,pos_y);
+        case 'X': return condition_X(x,y,scale,pos_x,pos_y);
         case 'Z': return condition_Z(x,y,scale,pos_x,pos_y);
         case '-': return condition_dash(x,y,scale,pos_x,pos_y);
         case '0': return condition_0(x,y,scale,pos_x,pos_y);

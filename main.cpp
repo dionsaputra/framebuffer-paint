@@ -43,6 +43,7 @@ Wireframe verticalScrollBarBorder;
 Wireframe legend;
 Point disorientation;
 float diffX,diffY;
+bool useBatik;
 
 Wireframe createRectangle(Point topLeft, Point bottomRight) {
     vector<Point> points;
@@ -62,6 +63,7 @@ void setupWindow() {
     window = createRectangle(Point(350,50), Point(xres-50, yres-250));
     window.setBorderColor(Color(0,250,0));
     disorientation = window.getTopLeft();
+    useBatik = false;
     diffX = (float) (xres-350)/CANVAS_WIDTH;
     diffY = (float) (yres-100)/CANVAS_LENGTH;
     drawer.draw_wireframe(window);
@@ -82,7 +84,6 @@ void setupLegend() {
     drawer.draw_word("NEW", Point(xStart, yStart+30), 15, 2, Color(0, 255, 0));
     drawer.draw_word("OPEN", Point(xStart, yStart+50), 15, 2, Color(0, 255, 0));
     drawer.draw_word("SAVE", Point(xStart, yStart+70), 15, 2, Color(0, 255, 0));
-    drawer.draw_word("LOAD", Point(xStart, yStart+90), 15, 2, Color(0, 255, 0));
     drawer.draw_word("EXIT", Point(xStart, yStart+110), 15, 2, Color(0, 255, 0));
 
     int xCol2 = xStart + (dx/5);
@@ -98,7 +99,8 @@ void setupLegend() {
     drawer.draw_word("LINE-STYLE", Point(xCol3, yStart+70), 15, 2, Color(0, 255, 0));
     drawer.draw_word("FILL", Point(xCol3, yStart+90), 15, 2, Color(0, 255, 0));
     drawer.draw_word("UNFILL", Point(xCol3, yStart+110), 15, 2, Color(0, 255, 0));
-    drawer.draw_word("FILL-BATIK", Point(xCol3, yStart+130), 15, 2, Color(0, 255, 0));
+    drawer.draw_word("USE-BATIK", Point(xCol3, yStart+130), 15, 2, Color(0, 255, 0));
+    drawer.draw_word("OFF-BATIK", Point(xCol3, yStart+150), 15, 2, Color(0, 255, 0));
 
     int xCol4 = xStart + (3*dx/5);
     drawer.draw_word("OBJECT", Point(xCol4-25, yStart), 20, 3, Color(0, 255, 255));
@@ -200,8 +202,7 @@ void scroll(int dx, int dy){
         for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
             itr->second.translate(-dx,-dy);
         }
-        
-        drawer.draw_canvas(wireframes,window,disorientation,true);
+        drawer.draw_canvas(wireframes,window,disorientation,true,useBatik);
         redrawScrollbars();
     }
 }
@@ -258,7 +259,7 @@ void zoom(float scale){
         
         resizeHorizontalScrollBar(dx);
         resizeVerticalScrollBar(dy);
-        drawer.draw_canvas(wireframes,window,disorientation,true);
+        drawer.draw_canvas(wireframes,window,disorientation,true,useBatik);
         redrawScrollbars();
         drawer.draw_wireframe(horizontalScrollBarBorder);
         drawer.draw_wireframe(verticalScrollBarBorder);
@@ -291,7 +292,7 @@ void hideLabels(){
         loc.translate(200, 0);
         drawer.draw_word(name, loc, 25, 3, Color(0,0,0));
     }
-    drawer.draw_canvas(wireframes,window,disorientation,true);
+    drawer.draw_canvas(wireframes,window,disorientation,true,useBatik);
 }
 
 int main() {        
@@ -321,8 +322,17 @@ int main() {
         cin >> inputCommand;
 
         hideLabels();
+        if (inputCommand == "new") {
+            // TODO: add new command
+        } else if (inputCommand == "open") {
+            // TODO: add open command
+        } else if (inputCommand == "line-color") {
+            // TODO: add line-color command
+        } else if (inputCommand == "thickness") {
+            // TODO: add thickness command 
+        } else if (inputCommand == "line-style") {
 
-        if(inputCommand == "select"){
+        } else if(inputCommand == "select"){
             cout << "----list----" << endl;
             for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
                 if (currentWireframe == itr->first){
@@ -343,7 +353,7 @@ int main() {
         } else if (inputCommand == "current") {
             cout << currentWireframe << endl;
             int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
-        } else if(inputCommand == "scroll"){
+        } else if (inputCommand == "scroll"){
             tcsetattr( fileno( stdin ), TCSANOW, &newSettings );
             cout << "Use WASD to navigate" << endl;
             cout << "Enter 'x' to return" << endl;
@@ -377,7 +387,7 @@ int main() {
                     break;
                 }
                 
-                drawer.draw_canvas(wireframes,window,disorientation,true);
+                drawer.draw_canvas(wireframes,window,disorientation,true,useBatik);
             }
         } else if (inputCommand == "exit") {
             exit(1);
@@ -406,7 +416,7 @@ int main() {
                     break;
                 }
 
-                drawer.draw_canvas(wireframes,window,disorientation,true);
+                drawer.draw_canvas(wireframes,window,disorientation,true,useBatik);
                 drawer.draw_wireframe(horizontalScrollBarBorder);
                 drawer.draw_wireframe(verticalScrollBarBorder);
                 drawer.draw_wireframe(window);
@@ -430,7 +440,7 @@ int main() {
                     tcsetattr( fileno( stdin ), TCSANOW, &oldSettings );    
                     break;
                 }
-                drawer.draw_canvas(wireframes,window,disorientation,true);
+                drawer.draw_canvas(wireframes,window,disorientation,true,useBatik);
                 drawer.draw_wireframe(horizontalScrollBarBorder);
                 drawer.draw_wireframe(verticalScrollBarBorder);
                 drawer.draw_wireframe(window);
@@ -472,7 +482,7 @@ int main() {
                     tcsetattr( fileno( stdin ), TCSANOW, &oldSettings);    
                     break;
                 }
-            drawer.draw_canvas(wireframes,window,disorientation,true);
+            drawer.draw_canvas(wireframes,window,disorientation,true,useBatik);
             }
         } else if (inputCommand == "fill" && currentWireframe != "") {
             int red, green, blue;
@@ -486,7 +496,7 @@ int main() {
             drawer.erase_canvas(wireframes,disorientation);
             wireframes.find(currentWireframe)->second.setFillColor(Color::background());
             drawer.draw_canvas(wireframes,window,disorientation,true);
-        } else if(inputCommand == "create"){
+        } else if (inputCommand == "create"){
             int radius, nPoint, xCenter, yCenter, red, green, boy;
             string nameShape;
 
@@ -505,7 +515,7 @@ int main() {
 
             Wireframe wireframe(radius, nPoint, Point(xCenter, yCenter), Color(red, green, boy));
             wireframes.insert(pair<string, Wireframe>(nameShape, wireframe));
-            drawer.draw_canvas(wireframes,window,disorientation,true);
+            drawer.draw_canvas(wireframes,window,disorientation,true,useBatik);
         } else if (inputCommand == "edit-line" && currentWireframe != "") {
             float thickness;
             char lineStyle;
@@ -523,7 +533,7 @@ int main() {
             if(lineStyle == 's' || lineStyle == 'd'){
                 wireframes.find(currentWireframe)->second.setLineStyle(lineStyle);
             }
-            drawer.draw_canvas(wireframes,window, disorientation, true);
+            drawer.draw_canvas(wireframes,window, disorientation, true, useBatik);
         } else if (inputCommand == "show-label"){
             for (auto itr = wireframes.begin(); itr != wireframes.end(); itr++) {
                 string name =  itr->first;
@@ -533,7 +543,20 @@ int main() {
             }
         } else if (inputCommand == "hide-label"){
             hideLabels();
-        } else {
+        } else if (inputCommand == "use-batik"){
+            useBatik = true;
+            drawer.erase_canvas(wireframes,disorientation);
+            drawer.draw_canvas(wireframes,window,disorientation,true,useBatik);
+        } else if (inputCommand == "off-batik"){
+            useBatik = false;
+            drawer.erase_canvas(wireframes,disorientation);
+            drawer.draw_canvas(wireframes,window,disorientation,true,useBatik);
+        } else if (inputCommand == "delete" && currentWireframe != ""){
+            drawer.erase_canvas(wireframes,disorientation);
+            wireframes.erase(currentWireframe);
+            currentWireframe = "";
+            drawer.draw_canvas(wireframes,window,disorientation,true,useBatik);
+        }else{      
             cout << "Please enter a valid command" << endl;
         }
     }

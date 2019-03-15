@@ -68,9 +68,9 @@ public:
 
     void unfill_wireframe(Wireframe wireframe);
 
-    void queueFloodFill(Wireframe wireframe);
+    void queueFloodFill(Wireframe wireframe, bool useBatik = false);
 
-    void draw_canvas(map<string,Wireframe> canvas, Wireframe window, Point disorientasi,bool useStyle = false);
+    void draw_canvas(map<string,Wireframe> canvas, Wireframe window, Point disorientasi,bool useStyle = false, bool useBatik = false);
 
     void erase_canvas(map<string,Wireframe> canvas, Point disorientasi);
 
