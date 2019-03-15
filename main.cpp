@@ -518,13 +518,18 @@ int main() {
             useBatik = true;
             drawer.erase_canvas(wireframes,disorientation);
             drawer.draw_canvas(wireframes,window,disorientation,true,useBatik);
-        }else if (inputCommand == "off-batik"){
+        } else if (inputCommand == "off-batik"){
             useBatik = false;
             drawer.erase_canvas(wireframes,disorientation);
             drawer.draw_canvas(wireframes,window,disorientation,true,useBatik);
         }else if (inputCommand == "credits"){
             credits();
             setup();
+            drawer.draw_canvas(wireframes,window,disorientation,true,useBatik);
+        } else if (inputCommand == "delete" && currentWireframe != ""){
+            drawer.erase_canvas(wireframes,disorientation);
+            wireframes.erase(currentWireframe);
+            currentWireframe = "";
             drawer.draw_canvas(wireframes,window,disorientation,true,useBatik);
         }else{      
             cout << "Please enter a valid command" << endl;
