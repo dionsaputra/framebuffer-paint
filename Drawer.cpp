@@ -205,7 +205,7 @@ void Drawer::unfill_wireframe(Wireframe wireframe){
     }
 }
 
-void Drawer::queueFloodFill(Wireframe wireframe) {
+void Drawer::queueFloodFill(Wireframe wireframe, bool useBatik) {
     Point startPoint = wireframe.getInnerPoint();
     Color fillColor = wireframe.getFillColor();
     Color borderColor = wireframe.getBorderColor();
@@ -224,33 +224,49 @@ void Drawer::queueFloodFill(Wireframe wireframe) {
         Point bottom = nextPoint.getBottom();
 
         // getColor(left).display();
-        if (wireframe.isInEnvelope(left) && !getColor(left).isEqual(borderColor) && !getColor(left).isEqual(fillColor)) {
-            draw_point(left, fillColor);
+        if (wireframe.isInEnvelope(left) && !getColor(left).isEqual(borderColor) && !getColor(left).isEqual(fillColor)&& !getColor(top).isEqual(Color(255,255,255))) {
+            if ((useBatik && (left.getX() * left.getY())%10 -3 > 0) || (!useBatik)){
+                draw_point(left, fillColor);
+            }else{
+                draw_point(left, Color(255,255,255));
+            }
             // cout<<"insert left"<<endl;
             pointQueue.push(left);
         }
 
-        if (wireframe.isInEnvelope(right) && !getColor(right).isEqual(borderColor) && !getColor(right).isEqual(fillColor)) {
-            draw_point(right, fillColor);
+        if (wireframe.isInEnvelope(right) && !getColor(right).isEqual(borderColor) && !getColor(right).isEqual(fillColor) && !getColor(top).isEqual(Color(255,255,255))) {
+            if ((useBatik && (right.getX() * right.getY())%10 - 1> 0) || (!useBatik)){
+                draw_point(right, fillColor);
+            }else{
+                draw_point(right, Color(255,255,255));
+            }
             // cout<<"insert right"<<endl;
             pointQueue.push(right);
         }
 
-        if (wireframe.isInEnvelope(top) && !getColor(top).isEqual(borderColor) && !getColor(top).isEqual(fillColor)) {
-            draw_point(top, fillColor);
+        if (wireframe.isInEnvelope(top) && !getColor(top).isEqual(borderColor) && !getColor(top).isEqual(fillColor) && !getColor(top).isEqual(Color(255,255,255))) {
+            if ((useBatik && (top.getX() + top.getY())%10 - 1 > 0) || (!useBatik)){
+                draw_point(top, fillColor);
+            }else{
+                draw_point(top, Color(255,255,255));
+            }
             // cout<<"insert top"<<endl;
             pointQueue.push(top);
         }
 
-        if (wireframe.isInEnvelope(bottom) && !getColor(bottom).isEqual(borderColor) && !getColor(bottom).isEqual(fillColor)) {
-            draw_point(bottom, fillColor);
+        if (wireframe.isInEnvelope(bottom) && !getColor(bottom).isEqual(borderColor) && !getColor(bottom).isEqual(fillColor)&& !getColor(top).isEqual(Color(255,255,255))) {
+            if ((useBatik && (bottom.getX() + bottom.getY())%10 - 1 > 0) || (!useBatik)){
+                draw_point(bottom, fillColor);
+            }else{
+                draw_point(bottom, Color(255,255,255));
+            }
             // cout<<"insert bottom"<<endl;
             pointQueue.push(bottom);
         }
     }
 }
 
-void Drawer::draw_canvas(map<string,Wireframe> canvas, Wireframe window, Point disorientasi, bool useStyle){
+void Drawer::draw_canvas(map<string,Wireframe> canvas, Wireframe window, Point disorientasi, bool useStyle, bool useBatik){
     for (auto itr=canvas.begin(); itr!=canvas.end();itr++){
         Wireframe wireframe = itr->second;
         wireframe.translate(disorientasi.getX(),disorientasi.getY());
@@ -258,7 +274,7 @@ void Drawer::draw_canvas(map<string,Wireframe> canvas, Wireframe window, Point d
         Wireframe clippingWireframe = wireframe.clippingResult(window);
         if (clippingWireframe.getPoints().size() > 0) {
             draw_wireframe(clippingWireframe);
-            queueFloodFill(clippingWireframe);
+            queueFloodFill(clippingWireframe,useBatik);
         }
     }
     if (useStyle){

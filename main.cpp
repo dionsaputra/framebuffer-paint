@@ -43,6 +43,7 @@ Wireframe verticalScrollBarBorder;
 Wireframe statusBar;
 Point disorientation;
 float diffX,diffY;
+bool useStyle, useBatik;
 
 Wireframe createRectangle(Point topLeft, Point bottomRight) {
     vector<Point> points;
@@ -62,6 +63,8 @@ void setupWindow() {
     window = createRectangle(Point(350,50), Point(xres-50, yres-250));
     window.setBorderColor(Color(0,250,0));
     disorientation = window.getTopLeft();
+    useStyle = false;
+    useBatik = false;
     diffX = (float) (xres-350)/CANVAS_WIDTH;
     diffY = (float) (yres-100)/CANVAS_LENGTH;
     drawer.draw_wireframe(window);
@@ -157,8 +160,7 @@ void scroll(int dx, int dy){
         for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
             itr->second.translate(-dx,-dy);
         }
-        
-        drawer.draw_canvas(wireframes,window,disorientation,true);
+        drawer.draw_canvas(wireframes,window,disorientation,useStyle,useBatik);
         redrawScrollbars();
     }
 }
@@ -215,7 +217,7 @@ void zoom(float scale){
         
         resizeHorizontalScrollBar(dx);
         resizeVerticalScrollBar(dy);
-        drawer.draw_canvas(wireframes,window,disorientation,true);
+        drawer.draw_canvas(wireframes,window,disorientation,useStyle,useBatik);
         redrawScrollbars();
         drawer.draw_wireframe(horizontalScrollBarBorder);
         drawer.draw_wireframe(verticalScrollBarBorder);
@@ -247,7 +249,7 @@ void hideLabels(){
         loc.translate(200, 0);
         drawer.draw_word(name, loc, 25, 3, Color(0,0,0));
     }
-    drawer.draw_canvas(wireframes,window,disorientation,true);
+    drawer.draw_canvas(wireframes,window,disorientation,useStyle,useBatik);
 }
 
 int main() {        
@@ -333,7 +335,7 @@ int main() {
                     break;
                 }
                 
-                drawer.draw_canvas(wireframes,window,disorientation,true);
+                drawer.draw_canvas(wireframes,window,disorientation,useStyle,useBatik);
             }
         } else if (inputCommand == "exit") {
             exit(1);
@@ -362,7 +364,7 @@ int main() {
                     break;
                 }
 
-                drawer.draw_canvas(wireframes,window,disorientation,true);
+                drawer.draw_canvas(wireframes,window,disorientation,useStyle,useBatik);
                 drawer.draw_wireframe(horizontalScrollBarBorder);
                 drawer.draw_wireframe(verticalScrollBarBorder);
                 drawer.draw_wireframe(window);
@@ -386,7 +388,7 @@ int main() {
                     tcsetattr( fileno( stdin ), TCSANOW, &oldSettings );    
                     break;
                 }
-                drawer.draw_canvas(wireframes,window,disorientation,true);
+                drawer.draw_canvas(wireframes,window,disorientation,useStyle,useBatik);
                 drawer.draw_wireframe(horizontalScrollBarBorder);
                 drawer.draw_wireframe(verticalScrollBarBorder);
                 drawer.draw_wireframe(window);
@@ -428,7 +430,7 @@ int main() {
                     tcsetattr( fileno( stdin ), TCSANOW, &oldSettings);    
                     break;
                 }
-            drawer.draw_canvas(wireframes,window,disorientation,true);
+            drawer.draw_canvas(wireframes,window,disorientation,useStyle,useBatik);
             }
         } else if (inputCommand == "fill" && currentWireframe != "") {
             int red, green, blue;
@@ -437,7 +439,7 @@ int main() {
             
             drawer.erase_canvas(wireframes,disorientation);
             wireframes.find(currentWireframe)->second.setFillColor(Color(red, green, blue));
-            drawer.draw_canvas(wireframes,window,disorientation,true);
+            drawer.draw_canvas(wireframes,window,disorientation,useStyle,useBatik);
         } else if(inputCommand == "create"){
             int radius, nPoint, xCenter, yCenter, red, green, boy;
             string nameShape;
@@ -457,7 +459,7 @@ int main() {
 
             Wireframe wireframe(radius, nPoint, Point(xCenter, yCenter), Color(red, green, boy));
             wireframes.insert(pair<string, Wireframe>(nameShape, wireframe));
-            drawer.draw_canvas(wireframes,window,disorientation,true);
+            drawer.draw_canvas(wireframes,window,disorientation,useStyle,useBatik);
         } else if (inputCommand == "edit-line" && currentWireframe != "") {
             float thickness;
             char lineStyle;
@@ -485,7 +487,15 @@ int main() {
             }
         } else if (inputCommand == "hide-label"){
             hideLabels();
-        } else {
+        } else if (inputCommand == "use-batik"){
+            useBatik = true;
+        }else if (inputCommand == "use-style"){
+            useStyle = true;
+        }else if (inputCommand == "off-batik"){
+            useBatik = false;
+        }else if (inputCommand == "off-style"){
+            useStyle = false;
+        }else{      
             cout << "Please enter a valid command" << endl;
         }
     }
