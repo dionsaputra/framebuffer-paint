@@ -40,7 +40,7 @@ Wireframe horizontalScrollBar;
 Wireframe verticalScrollBar;
 Wireframe horizontalScrollBarBorder;
 Wireframe verticalScrollBarBorder;
-Wireframe statusBar;
+Wireframe legend;
 Point disorientation;
 float diffX,diffY;
 
@@ -65,10 +65,53 @@ void setupWindow() {
     diffX = (float) (xres-350)/CANVAS_WIDTH;
     diffY = (float) (yres-100)/CANVAS_LENGTH;
     drawer.draw_wireframe(window);
+}
 
-    statusBar = createRectangle(Point(350,yres-230),Point(xres-30,yres-50));
-    statusBar.setBorderColor(Color(0,250,0));
-    drawer.draw_wireframe(statusBar);
+void setupLegend() {
+    int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
+
+    legend = createRectangle(Point(350,yres-200),Point(xres-30,yres-30));
+    legend.setBorderColor(Color(0,250,0));
+    drawer.draw_wireframe(legend);
+
+    int xStart = 400, xEnd = xres-30-50;
+    int dx = xEnd-xStart;
+    int yStart = yres-180;
+
+    drawer.draw_word("FILE", Point(xStart-25, yStart), 20, 3, Color(0, 255, 255));
+    drawer.draw_word("NEW", Point(xStart, yStart+30), 15, 2, Color(0, 255, 0));
+    drawer.draw_word("OPEN", Point(xStart, yStart+50), 15, 2, Color(0, 255, 0));
+    drawer.draw_word("SAVE", Point(xStart, yStart+70), 15, 2, Color(0, 255, 0));
+    drawer.draw_word("LOAD", Point(xStart, yStart+90), 15, 2, Color(0, 255, 0));
+    drawer.draw_word("EXIT", Point(xStart, yStart+110), 15, 2, Color(0, 255, 0));
+
+    int xCol2 = xStart + (dx/5);
+    drawer.draw_word("VIEW", Point(xCol2-25, yStart), 20, 3, Color(0, 255, 255));
+    drawer.draw_word("ZOOM", Point(xCol2, yStart+30), 15, 2, Color(0, 255, 0));
+    drawer.draw_word("SCROLL", Point(xCol2, yStart+50), 15, 2, Color(0, 255, 0));
+    drawer.draw_word("TRANSLATE", Point(xCol2, yStart+70), 15, 2, Color(0, 255, 0));
+
+    int xCol3 = xStart + (2*dx/5);
+    drawer.draw_word("ATTRIBUTE", Point(xCol3-25, yStart), 20, 3, Color(0, 255, 255));
+    drawer.draw_word("LINE-COLOR", Point(xCol3, yStart+30), 15, 2, Color(0, 255, 0));
+    drawer.draw_word("THICKNESS", Point(xCol3, yStart+50), 15, 2, Color(0, 255, 0));
+    drawer.draw_word("LINE-STYLE", Point(xCol3, yStart+70), 15, 2, Color(0, 255, 0));
+    drawer.draw_word("FILL", Point(xCol3, yStart+90), 15, 2, Color(0, 255, 0));
+    drawer.draw_word("UNFILL", Point(xCol3, yStart+110), 15, 2, Color(0, 255, 0));
+    drawer.draw_word("FILL-BATIK", Point(xCol3, yStart+130), 15, 2, Color(0, 255, 0));
+
+    int xCol4 = xStart + (3*dx/5);
+    drawer.draw_word("OBJECT", Point(xCol4-25, yStart), 20, 3, Color(0, 255, 255));
+    drawer.draw_word("LINE", Point(xCol4, yStart+30), 15, 2, Color(0, 255, 0));
+    drawer.draw_word("TRIANGLE", Point(xCol4, yStart+50), 15, 2, Color(0, 255, 0));
+    drawer.draw_word("RECTANGLE", Point(xCol4, yStart+70), 15, 2, Color(0, 255, 0));
+    drawer.draw_word("POLYGON", Point(xCol4, yStart+90), 15, 2, Color(0, 255, 0));
+    drawer.draw_word("SELECT", Point(xCol4, yStart+110), 15, 2, Color(0, 255, 0));
+    drawer.draw_word("DELETE", Point(xCol4, yStart+130), 15, 2, Color(0, 255, 0));
+
+    int xCol5 = xStart + (4*dx/5);
+    drawer.draw_word("ANIMATION", Point(xCol5-25, yStart), 20, 3, Color(0, 255, 255));
+    drawer.draw_word("CREDITS", Point(xCol5, yStart+30), 15, 2, Color(0, 255, 0));
 }
 
 void setupHorizontalScrollBarBorder() {
@@ -234,6 +277,7 @@ void moveScrollBar(Wireframe* scrollbar,int x,int y){
 
 void setup() {
     setupWindow();
+    setupLegend();
     setupHorizontalScrollBarBorder();
     setupVerticalScrollBarBorder();
     setupScrollbars();
@@ -438,6 +482,10 @@ int main() {
             drawer.erase_canvas(wireframes,disorientation);
             wireframes.find(currentWireframe)->second.setFillColor(Color(red, green, blue));
             drawer.draw_canvas(wireframes,window,disorientation,true);
+        } else if (inputCommand == "unfill") {
+            drawer.erase_canvas(wireframes,disorientation);
+            wireframes.find(currentWireframe)->second.setFillColor(Color::background());
+            drawer.draw_canvas(wireframes,window,disorientation,true);
         } else if(inputCommand == "create"){
             int radius, nPoint, xCenter, yCenter, red, green, boy;
             string nameShape;
@@ -481,7 +529,7 @@ int main() {
                 string name =  itr->first;
                 Point loc = itr->second.getInnerPoint();
                 loc.translate(200, 0);
-                drawer.draw_word(name, loc, 25, 3, Color(255,255,255));
+                drawer.draw_word(name, loc, 25, 3, Color(0, 255, 0));
             }
         } else if (inputCommand == "hide-label"){
             hideLabels();
