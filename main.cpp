@@ -388,21 +388,34 @@ int main() {
                     drawer.erase_canvas(wireframes,disorientation);
                     disorientation.translate(0,5);
                     moveScrollBar(&verticalScrollBar,0,-5 * diffY);
+                    drawer.draw_wireframe(horizontalScrollBarBorder);
+                    drawer.draw_wireframe(verticalScrollBarBorder);
+                    setupLegend();
                     // Scroll up
                 } else if (c == 'a' && horizontalScrollBar.getTopLeft().getX()>350){
                     drawer.erase_canvas(wireframes,disorientation);
                     disorientation.translate(5,0);
+                    drawer.draw_wireframe(horizontalScrollBarBorder);
+                    drawer.draw_wireframe(verticalScrollBarBorder);
+                    setupLegend();
                     moveScrollBar(&horizontalScrollBar,-5 * diffX,0);
                     // Scroll left
                 } else if (c == 's' && verticalScrollBar.getBottomRight().getY()<drawer.vinfo.yres-250){
                     drawer.erase_canvas(wireframes,disorientation);
                     disorientation.translate(0,-5);
                     moveScrollBar(&verticalScrollBar,0,5*diffY);
+                    drawer.draw_wireframe(horizontalScrollBarBorder);
+                    drawer.draw_wireframe(verticalScrollBarBorder);
+                    setupLegend();
+                
                     // Scroll down
                 } else if (c == 'd' && horizontalScrollBar.getBottomRight().getX()<drawer.vinfo.xres-50){
                     drawer.erase_canvas(wireframes,disorientation);
                     disorientation.translate(-5,0);
                     moveScrollBar(&horizontalScrollBar,5*diffX,0);
+                    drawer.draw_wireframe(horizontalScrollBarBorder);
+                    drawer.draw_wireframe(verticalScrollBarBorder);
+                    setupLegend();
                     // Scroll right
                 } else if(c=='x'){
                     // Change settings
@@ -442,6 +455,8 @@ int main() {
                 drawer.draw_canvas(wireframes,window,disorientation,true,useBatik);
                 drawer.draw_wireframe(horizontalScrollBarBorder);
                 drawer.draw_wireframe(verticalScrollBarBorder);
+                redrawScrollbars();
+                setupLegend();
                 drawer.draw_wireframe(window);
             }
         } else if (inputCommand == "rotate" && currentWireframe != ""){
@@ -466,7 +481,9 @@ int main() {
                 drawer.draw_canvas(wireframes,window,disorientation,true,useBatik);
                 drawer.draw_wireframe(horizontalScrollBarBorder);
                 drawer.draw_wireframe(verticalScrollBarBorder);
-                drawer.draw_wireframe(window);
+                redrawScrollbars();
+                setupLegend();
+                 drawer.draw_wireframe(window);
             }
         } else if (inputCommand == "zoom") {
             tcsetattr( fileno( stdin ), TCSANOW, &newSettings );
@@ -485,6 +502,10 @@ int main() {
                     tcsetattr( fileno( stdin ), TCSANOW, &oldSettings);    
                     break;
                 }
+                drawer.draw_wireframe(horizontalScrollBarBorder);
+                drawer.draw_wireframe(verticalScrollBarBorder);
+                redrawScrollbars();
+                setupLegend();
             }
         } else if (inputCommand == "scale" && currentWireframe != "") {
             tcsetattr( fileno( stdin ), TCSANOW, &newSettings );
@@ -507,6 +528,11 @@ int main() {
                 }
             drawer.draw_canvas(wireframes,window,disorientation,true,useBatik);
             }
+            drawer.draw_wireframe(horizontalScrollBarBorder);
+            drawer.draw_wireframe(verticalScrollBarBorder);
+            redrawScrollbars();
+            setupLegend();
+                
         } else if (inputCommand == "fill" && currentWireframe != "") {
             int red, green, blue;
             cout << "fill color (r g b): ";
