@@ -112,7 +112,7 @@ void setupLegend() {
     drawer.draw_word("NEW", Point(xStart, yStart+30), 15, 2, Color(0, 255, 0));
     drawer.draw_word("OPEN", Point(xStart, yStart+50), 15, 2, Color(0, 255, 0));
     drawer.draw_word("SAVE", Point(xStart, yStart+70), 15, 2, Color(0, 255, 0));
-    drawer.draw_word("EXIT", Point(xStart, yStart+110), 15, 2, Color(0, 255, 0));
+    drawer.draw_word("EXIT", Point(xStart, yStart+90), 15, 2, Color(0, 255, 0));
 
     int xCol2 = xStart + (dx/5);
     drawer.draw_word("VIEW", Point(xCol2-25, yStart), 20, 3, Color(0, 255, 255));
@@ -128,7 +128,6 @@ void setupLegend() {
     drawer.draw_word("FILL", Point(xCol3, yStart+90), 15, 2, Color(0, 255, 0));
     drawer.draw_word("UNFILL", Point(xCol3, yStart+110), 15, 2, Color(0, 255, 0));
     drawer.draw_word("USE-BATIK", Point(xCol3, yStart+130), 15, 2, Color(0, 255, 0));
-    drawer.draw_word("OFF-BATIK", Point(xCol3, yStart+150), 15, 2, Color(0, 255, 0));
 
     int xCol4 = xStart + (3*dx/5);
     drawer.draw_word("OBJECT", Point(xCol4-25, yStart), 20, 3, Color(0, 255, 255));
