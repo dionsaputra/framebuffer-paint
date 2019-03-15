@@ -577,7 +577,7 @@ int main() {
             Wireframe wireframe(radius, nPoint, Point(xCenter, yCenter), Color(red, green, boy));
             wireframes.insert(pair<string, Wireframe>(nameShape, wireframe));
             drawer.draw_canvas(wireframes,window,disorientation,true,useBatik);
-        } else if (inputCommand == "create-triangle"){
+        } else if (inputCommand == "triangle"){
             int radius, xCenter, yCenter, red, green, boy;
             string nameShape;
 
@@ -595,7 +595,7 @@ int main() {
             Wireframe wireframe(radius, 3, Point(xCenter, yCenter), Color(red, green, boy));
             wireframes.insert(pair<string, Wireframe>(nameShape, wireframe));
             drawer.draw_canvas(wireframes,window,disorientation,true,useBatik);
-        }else if (inputCommand == "create-rectangle"){
+        }else if (inputCommand == "rectangle"){
             int radius, xCenter, yCenter, red, green, boy;
             string nameShape;
 
@@ -675,6 +675,23 @@ int main() {
             wireframes.erase(currentWireframe);
             currentWireframe = "";
             drawer.draw_canvas(wireframes,window,disorientation,true,useBatik);
+        } else if ("line" == inputCommand)  {
+  int radius, xCenter, yCenter, red, green, boy;
+            string nameShape;
+
+            cout << "shape's name: ";
+            cin >> nameShape;
+            cout << "center (x y): ";
+            cin >> xCenter >> yCenter;
+            cout << "radius: ";
+            cin >> radius;
+            cout << "color (r g b): ";
+            cin >> red >> green >> boy;
+
+            for (auto & c: nameShape) c = toupper(c);
+
+            Wireframe wireframe(radius, 2, Point(xCenter, yCenter), Color(red, green, boy));
+            wireframes.insert(pair<string, Wireframe>(nameShape, wireframe));
         }else{      
             cout << "Please enter a valid command" << endl;
         }
