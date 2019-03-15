@@ -248,8 +248,12 @@ void Drawer::draw_canvas(map<string,Wireframe> canvas, Wireframe window, Point d
     for (auto itr=canvas.begin(); itr!=canvas.end();itr++){
         Wireframe wireframe = itr->second;
         wireframe.translate(disorientasi.getX(),disorientasi.getY());
-        draw_wireframe(wireframe.clippingResult(window));
-        queueFloodFill(wireframe.clippingResult(window));
+
+        Wireframe clippingWireframe = wireframe.clippingResult(window);
+        if (clippingWireframe.getPoints().size() > 0) {
+            draw_wireframe(clippingWireframe);
+            queueFloodFill(clippingWireframe);
+        }
     }
 }
 

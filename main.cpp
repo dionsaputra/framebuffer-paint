@@ -59,24 +59,24 @@ Wireframe createRectangle(Point topLeft, Point bottomRight) {
 
 void setupWindow() {
     int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
-    window = createRectangle(Point(250,50), Point(xres-50, yres-50));
+    window = createRectangle(Point(350,50), Point(xres-50, yres-250));
     window.setBorderColor(Color(0,250,0));
     disorientation = window.getTopLeft();
-    diffX = (float) (xres-300)/CANVAS_WIDTH;
+    diffX = (float) (xres-350)/CANVAS_WIDTH;
     diffY = (float) (yres-100)/CANVAS_LENGTH;
     drawer.draw_wireframe(window);
 }
 
 void setupHorizontalScrollBarBorder() {
     int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
-    horizontalScrollBarBorder = createRectangle(Point(250,yres-49), Point(xres-50, yres-31));
+    horizontalScrollBarBorder = createRectangle(Point(350,yres-249), Point(xres-50, yres-230));
     horizontalScrollBarBorder.setBorderColor(Color(0,250,0));
     drawer.draw_wireframe(horizontalScrollBarBorder);
 }
 
 void setupVerticalScrollBarBorder() {
     int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
-    verticalScrollBarBorder = createRectangle(Point(xres-49,50), Point(xres-31, yres-50));
+    verticalScrollBarBorder = createRectangle(Point(xres-49,50), Point(xres-31, yres-230));
     verticalScrollBarBorder.setBorderColor(Color(0,250,0));
     drawer.draw_wireframe(verticalScrollBarBorder);
 }
@@ -268,10 +268,10 @@ int main() {
 
     // Receive command
     while(1){
-
-        cout << "$";
+        printf("$ ");
         flush(cout);
         cin >> inputCommand;
+
         hideLabels();
 
         if(inputCommand == "select"){
