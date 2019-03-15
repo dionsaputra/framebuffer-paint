@@ -154,7 +154,7 @@ void scroll(int dx, int dy){
             itr->second.translate(-dx,-dy);
         }
         
-        drawer.draw_canvas(wireframes,window,disorientation);
+        drawer.draw_canvas(wireframes,window,disorientation,true);
         redrawScrollbars();
     }
 }
@@ -211,7 +211,7 @@ void zoom(float scale){
         
         resizeHorizontalScrollBar(dx);
         resizeVerticalScrollBar(dy);
-        drawer.draw_canvas(wireframes,window,disorientation);
+        drawer.draw_canvas(wireframes,window,disorientation,true);
         redrawScrollbars();
         drawer.draw_wireframe(horizontalScrollBarBorder);
         drawer.draw_wireframe(verticalScrollBarBorder);
@@ -243,7 +243,7 @@ void hideLabels(){
         loc.translate(200, 0);
         drawer.draw_word(name, loc, 25, 3, Color(0,0,0));
     }
-    drawer.draw_canvas(wireframes,window,disorientation);
+    drawer.draw_canvas(wireframes,window,disorientation,true);
 }
 
 int main() {        
@@ -329,7 +329,7 @@ int main() {
                     break;
                 }
                 
-                drawer.draw_canvas(wireframes,window,disorientation);
+                drawer.draw_canvas(wireframes,window,disorientation,true);
             }
         } else if (inputCommand == "exit") {
             exit(1);
@@ -358,7 +358,7 @@ int main() {
                     break;
                 }
 
-                drawer.draw_canvas(wireframes,window,disorientation);
+                drawer.draw_canvas(wireframes,window,disorientation,true);
                 drawer.draw_wireframe(horizontalScrollBarBorder);
                 drawer.draw_wireframe(verticalScrollBarBorder);
                 drawer.draw_wireframe(window);
@@ -382,7 +382,7 @@ int main() {
                     tcsetattr( fileno( stdin ), TCSANOW, &oldSettings );    
                     break;
                 }
-                drawer.draw_canvas(wireframes,window,disorientation);
+                drawer.draw_canvas(wireframes,window,disorientation,true);
                 drawer.draw_wireframe(horizontalScrollBarBorder);
                 drawer.draw_wireframe(verticalScrollBarBorder);
                 drawer.draw_wireframe(window);
@@ -424,7 +424,7 @@ int main() {
                     tcsetattr( fileno( stdin ), TCSANOW, &oldSettings);    
                     break;
                 }
-            drawer.draw_canvas(wireframes,window,disorientation);
+            drawer.draw_canvas(wireframes,window,disorientation,true);
             }
         } else if (inputCommand == "fill" && currentWireframe != "") {
             int red, green, blue;
@@ -433,7 +433,7 @@ int main() {
             
             drawer.erase_canvas(wireframes,disorientation);
             wireframes.find(currentWireframe)->second.setFillColor(Color(red, green, blue));
-            drawer.draw_canvas(wireframes,window,disorientation);
+            drawer.draw_canvas(wireframes,window,disorientation,true);
         } else if(inputCommand == "create"){
             int radius, nPoint, xCenter, yCenter, red, green, boy;
             string nameShape;
@@ -453,7 +453,7 @@ int main() {
 
             Wireframe wireframe(radius, nPoint, Point(xCenter, yCenter), Color(red, green, boy));
             wireframes.insert(pair<string, Wireframe>(nameShape, wireframe));
-            drawer.draw_canvas(wireframes,window,disorientation);
+            drawer.draw_canvas(wireframes,window,disorientation,true);
         } else if (inputCommand == "edit-line" && currentWireframe != "") {
             float thickness;
             char lineStyle;
@@ -471,7 +471,7 @@ int main() {
             if(lineStyle == 's' || lineStyle == 'd'){
                 wireframes.find(currentWireframe)->second.setLineStyle(lineStyle);
             }
-            drawer.draw_canvas(wireframes,window, disorientation);
+            drawer.draw_canvas(wireframes,window, disorientation, true);
         } else if (inputCommand == "show-label"){
             for (auto itr = wireframes.begin(); itr != wireframes.end(); itr++) {
                 string name =  itr->first;

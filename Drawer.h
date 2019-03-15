@@ -52,7 +52,7 @@ public:
 
     void drawLine(Point start, Point end, Color color);
 
-    void drawLineWidth(Point pointStart, Point pointEnd, float wd, Color color);
+    void drawLineWidth(Point pointStart, Point pointEnd, float wd, Color color, char style = 's');
             
     /*** Return the color of point in screen by reading framebuffer or background color if its outside screen ***/
     Color getColor(Point point);
@@ -61,7 +61,7 @@ public:
     void erase_point(Point point);
 
     /*** Draw all line in wireframe with its color ***/
-    void draw_wireframe(Wireframe wireframe);
+    void draw_wireframe(Wireframe wireframe,bool useStyle = false);
 
     /*** Erase all line in wireframes ***/
     void erase_wireframe(Wireframe wireframe);
@@ -70,7 +70,7 @@ public:
 
     void queueFloodFill(Wireframe wireframe);
 
-    void draw_canvas(map<string,Wireframe> canvas, Wireframe window, Point disorientasi);
+    void draw_canvas(map<string,Wireframe> canvas, Wireframe window, Point disorientasi,bool useStyle = false);
 
     void erase_canvas(map<string,Wireframe> canvas, Point disorientasi);
 

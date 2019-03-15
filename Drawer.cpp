@@ -120,7 +120,7 @@ void Drawer::drawLine(Point start, Point end, Color color) {
     } 
 }
 
-void Drawer::drawLineWidth(Point pointStart, Point pointEnd, float wd, Color color)
+void Drawer::drawLineWidth(Point pointStart, Point pointEnd, float wd, Color color, char style)
 {
     int x0 = pointStart.getX();
     int x1 = pointEnd.getX();
@@ -141,14 +141,20 @@ void Drawer::drawLineWidth(Point pointStart, Point pointEnd, float wd, Color col
         draw_point(Point(x0,y0), color);
         e2 = err; x2 = x0;
         if (2*e2 >= -dx) {                                           /* x step */
-            for (e2 += dy, y2 = y0; e2 < ed*wd && (y1 != y2 || dx > dy); e2 += dx)
-                draw_point(Point(x0,y2 += sy), color);
+            for (e2 += dy, y2 = y0; e2 < ed*wd && (y1 != y2 || dx > dy); e2 += dx){
+                if ((style == 's' ) || (style == 'd' && (x0%30) <= 15)){
+                    draw_point(Point(x0,y2 += sy), color);
+                }
+            }
             if (x0 == x1) break;
             e2 = err; err -= dy; x0 += sx; 
         } 
         if (2*e2 <= dy) {                                            /* y step */
-            for (e2 = dx-e2; e2 < ed*wd && (x1 != x2 || dx < dy); e2 += dy)
-                draw_point(Point(x2 += sx,y0), color);
+            for (e2 = dx-e2; e2 < ed*wd && (x1 != x2 || dx < dy); e2 += dy){
+                if ((style == 's') || (style == 'd' && (x0%30) <= 15)){
+                    draw_point(Point(x2 + sx,y0), color);
+                }
+            }
             if (y0 == y1) break;
             err += dx; y0 += sy; 
         }
@@ -172,11 +178,11 @@ void Drawer::erase_point(Point point) {
     draw_point(point, Color::background());
 }
 
-void Drawer::draw_wireframe(Wireframe wireframe) {
+void Drawer::draw_wireframe(Wireframe wireframe,bool useStyle) {
     int pointsSize = wireframe.getPoints().size();
     for (int i=1; i<=pointsSize; i++) {
         // drawLine(wireframe.getPoints()[(i-1)%pointsSize], wireframe.getPoints()[i%pointsSize], wireframe.getBorderColor());
-        drawLineWidth(wireframe.getPoints()[(i-1)%pointsSize], wireframe.getPoints()[i%pointsSize], wireframe.getThickness(), wireframe.getBorderColor()); 
+        drawLineWidth(wireframe.getPoints()[(i-1)%pointsSize], wireframe.getPoints()[i%pointsSize], wireframe.getThickness(), wireframe.getBorderColor(), wireframe.getLineStyle()); 
     }
 }
 
@@ -244,12 +250,23 @@ void Drawer::queueFloodFill(Wireframe wireframe) {
     }
 }
 
-void Drawer::draw_canvas(map<string,Wireframe> canvas, Wireframe window, Point disorientasi){
+void Drawer::draw_canvas(map<string,Wireframe> canvas, Wireframe window, Point disorientasi, bool useStyle){
     for (auto itr=canvas.begin(); itr!=canvas.end();itr++){
         Wireframe wireframe = itr->second;
         wireframe.translate(disorientasi.getX(),disorientasi.getY());
         draw_wireframe(wireframe.clippingResult(window));
         queueFloodFill(wireframe.clippingResult(window));
+    }
+    if (useStyle){
+        for (auto itr=canvas.begin(); itr!=canvas.end();itr++){
+            Wireframe wireframe = itr->second;
+            erase_wireframe(wireframe);
+        }
+        for (auto itr=canvas.begin(); itr!=canvas.end();itr++){
+            Wireframe wireframe = itr->second;
+            wireframe.translate(disorientasi.getX(),disorientasi.getY());
+            draw_wireframe(wireframe.clippingResult(window));
+        }
     }
 }
 
