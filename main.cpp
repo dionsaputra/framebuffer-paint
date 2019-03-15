@@ -355,11 +355,7 @@ int main() {
             // TODO: add open command
         } else if (inputCommand == "line-color") {
             // TODO: add line-color command
-        } else if (inputCommand == "thickness") {
-            // TODO: add thickness command 
-        } else if (inputCommand == "line-style") {
-
-        } else if(inputCommand == "select"){
+        }else if(inputCommand == "select"){
             cout << "----list----" << endl;
             for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
                 if (currentWireframe == itr->first){
@@ -543,25 +539,23 @@ int main() {
             Wireframe wireframe(radius, nPoint, Point(xCenter, yCenter), Color(red, green, boy));
             wireframes.insert(pair<string, Wireframe>(nameShape, wireframe));
             drawer.draw_canvas(wireframes,window,disorientation,true,useBatik);
-        } else if (inputCommand == "edit-line" && currentWireframe != "") {
+        } else if (inputCommand == "thickness" && currentWireframe != ""){
             float thickness;
-            char lineStyle;
-
             cout << "thickness: ";
             cin >> thickness;
-            cout << "line style (d/s): ";
-            cin >> lineStyle;
-            
             drawer.erase_canvas(wireframes,disorientation);
             if(thickness >= 1.0f){
                 wireframes.find(currentWireframe)->second.setThickness(thickness);
-            }   
-
-            if(lineStyle == 's' || lineStyle == 'd'){
+            }
+            drawer.draw_canvas(wireframes,window,disorientation,true,useBatik);
+        } else if(inputCommand == "linestyle" && currentWireframe != ""){
+            char lineStyle;
+            drawer.erase_canvas(wireframes,disorientation);
+            if (lineStyle == 's' || lineStyle == 'd'){
                 wireframes.find(currentWireframe)->second.setLineStyle(lineStyle);
             }
             drawer.draw_canvas(wireframes,window, disorientation, true, useBatik);
-        } else if (inputCommand == "show-label"){
+        }else if (inputCommand == "show-label"){
             for (auto itr = wireframes.begin(); itr != wireframes.end(); itr++) {
                 string name =  itr->first;
                 Point loc = itr->second.getInnerPoint();
