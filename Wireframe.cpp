@@ -236,9 +236,11 @@ Wireframe Wireframe::clippingResult(Wireframe window) {
         partialClipping(&clippingWireframe, window, areaCode);
     }
 
-    // for (int i=0;i<clippingWs
-    clippingWireframe.updateEnvelope();
-    clippingWireframe.updateInnerPoint();
+    if (clippingWireframe.getPoints().size() > 0) {
+        clippingWireframe.updateEnvelope();
+        clippingWireframe.updateInnerPoint();
+    }
+    
     return clippingWireframe;  
 }
 
@@ -274,22 +276,22 @@ Point Wireframe::intersect(Point inside, Point outside, Wireframe window) {
 
     int xOut = outside.getX(), yOut = outside.getY();
 
-    int dx = inside.getX() - xOut;
-    int dy = inside.getY() - yOut;
+    float dx = inside.getX() - xOut;
+    float dy = inside.getY() - yOut;
 
     if (xOut <= xMin) {
         if (yOut <= yMin) { // case 0
             int xSearch = (yMin - yOut) * dx / dy + xOut;
-            int ySearch = (xMin - xOut) * dy / dx + yOut;
+            //int ySearch = (xMin - xOut) * dy / dx + yOut;
 
-            if (xSearch < xMin) return Point(xMin, ySearch);
+           // if (xSearch < xMin) return Point(xMin, ySearch);
             return Point(xSearch, yMin);            
 
         } else if (yOut >= yMax) {  // case 6
             int xSearch = (yMax - yOut) * dx/dy + xOut;
-            int ySearch = (xMin - xOut) * dy/dx + yOut;
+            //int ySearch = (xMin - xOut) * dy/dx + yOut;
 
-            if (xSearch < xMin) return Point(xMin, ySearch);
+            //if (xSearch < xMin) return Point(xMin, ySearch);
             return Point(xSearch, yMax);            
 
         } else {    // case 3
@@ -299,15 +301,15 @@ Point Wireframe::intersect(Point inside, Point outside, Wireframe window) {
     } else if (xOut >= xMax) {
         if (yOut <= yMin) { // case 2
             int xSearch = (yMin - yOut) * dx/dy + xOut;
-            int ySearch = (xMax - xOut) * dy/dx + yOut;
+            // int ySearch = (xMax - xOut) * dy/dx + yOut;
 
-            if (xSearch < xMax) return Point(xMax, ySearch);
+            // if (xSearch < xMax) return Point(xMax, ySearch);
             return Point(xSearch, yMin);            
         } else if (yOut >= yMax) {  // case 8
             int xSearch = (yMax - yOut) * dx/dy + xOut;
-            int ySearch = (xMax - xOut) * dy/dx + yOut;
+            // int ySearch = (xMax - xOut) * dy/dx + yOut;
 
-            if (xSearch < xMax) return Point(xMax, ySearch);
+            // if (xSearch < xMax) return Point(xMax, ySearch);
             return Point(xSearch, yMax);            
 
         } else {    // case 5
