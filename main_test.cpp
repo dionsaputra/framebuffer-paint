@@ -11,7 +11,7 @@ int main() {
     Letter A('M', p, 5, green);
     A.printInfo();
     // drawer.draw_word("ILYAS", p, 50, 10, green);
-    string name = "EXIT SAVE";
+    string name = "JOWO";
     drawer.draw_word(name, p, 30, 5, Color(255,255,255));
     return 0;
 }

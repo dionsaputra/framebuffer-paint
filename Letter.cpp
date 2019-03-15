@@ -153,6 +153,14 @@ int Letter::condition_K(int x, int y, int scale, int pos_x,int pos_y){
 		);
 }
 
+int Letter::condition_J(int x, int y, int scale, int pos_x, int pos_y){ 
+    x -= pos_x; y -= pos_y;
+    bool cond_1 = ((x >= scale && x <= scale*4) && y <= scale);
+    bool cond_2 = ((x >= scale*3 && x <= scale*4) && y <= scale*4);
+    bool cond_3 = ((x >= scale && x <= scale*3) && y >= scale*4);
+    return  cond_1 || cond_2 || cond_3;
+}
+
 int Letter::condition_L(int x, int y, int scale, int pos_x, int pos_y) {
     int cond_x = scale*1 + pos_x,
     cond_y = scale*4 + pos_y;
@@ -213,6 +221,14 @@ int Letter::condition_V(int x, int y, int scale, int pos_x, int pos_y){
     bool cond_1 = ((x <= scale || x >= scale*4) && y <= scale*3);
     bool cond_2 = (((x >= scale && x <= scale*2) || (x >= scale*3 && x <= scale*4)) && (y >= scale*3 && y <= scale*4));
     bool cond_3 = y >= scale*4 && (x <= scale*3 && x >= scale*2);
+    return  cond_1 || cond_2 || cond_3;
+}
+
+int Letter::condition_W(int x, int y, int scale, int pos_x, int pos_y){ 
+    x -= pos_x; y -= pos_y;
+    bool cond_1 = ((x <= scale || x >= scale*4) && y <= scale*4);
+    bool cond_2 = ((x >= scale*2 && x <= scale*3) && (y >= scale && y <= scale*4));
+    bool cond_3 = y >= scale*4 && ((x <= scale*2 && x >= scale*1) || (x <= scale*4 && x >= scale*3));
     return  cond_1 || cond_2 || cond_3;
 }
 
@@ -314,6 +330,7 @@ int Letter::condition(Point point) {
         case 'G': return condition_G(x,y,scale,pos_x,pos_y);
         case 'H': return condition_H(x,y,scale,pos_x,pos_y);
         case 'I': return condition_I(x,y,scale,pos_x,pos_y);
+        case 'J': return condition_J(x,y,scale,pos_x,pos_y);
         case 'K': return condition_K(x,y,scale,pos_x,pos_y);
         case 'L': return condition_L(x,y,scale,pos_x,pos_y);
         case 'M': return condition_M(x,y,scale,pos_x,pos_y);
@@ -325,6 +342,7 @@ int Letter::condition(Point point) {
         case 'T': return condition_T(x,y,scale,pos_x,pos_y);
         case 'U': return condition_U(x,y,scale,pos_x,pos_y);
         case 'V': return condition_V(x,y,scale,pos_x,pos_y);
+        case 'W': return condition_W(x,y,scale,pos_x,pos_y);
         case 'Y': return condition_Y(x,y,scale,pos_x,pos_y);
         case 'X': return condition_X(x,y,scale,pos_x,pos_y);
         case 'Z': return condition_Z(x,y,scale,pos_x,pos_y);
