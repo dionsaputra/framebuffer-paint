@@ -224,8 +224,8 @@ void Drawer::queueFloodFill(Wireframe wireframe, bool useBatik) {
         Point bottom = nextPoint.getBottom();
 
         // getColor(left).display();
-        if (wireframe.isInEnvelope(left) && !getColor(left).isEqual(borderColor) && !getColor(left).isEqual(fillColor)&& !getColor(top).isEqual(Color(255,255,255))) {
-            if ((useBatik && (left.getX() * left.getY())%10 -3 > 0) || (!useBatik)){
+        if (wireframe.isInEnvelope(left) && !getColor(left).isEqual(borderColor) && !getColor(left).isEqual(fillColor)&& !getColor(right).isEqual(Color(255,255,255))) {
+            if ((useBatik && (left.getX() * left.getY())%9 - 3 > 0) || (!useBatik)){
                 draw_point(left, fillColor);
             }else{
                 draw_point(left, Color(255,255,255));
@@ -234,8 +234,8 @@ void Drawer::queueFloodFill(Wireframe wireframe, bool useBatik) {
             pointQueue.push(left);
         }
 
-        if (wireframe.isInEnvelope(right) && !getColor(right).isEqual(borderColor) && !getColor(right).isEqual(fillColor) && !getColor(top).isEqual(Color(255,255,255))) {
-            if ((useBatik && (right.getX() * right.getY())%10 - 1> 0) || (!useBatik)){
+        if (wireframe.isInEnvelope(right) && !getColor(right).isEqual(borderColor) && !getColor(right).isEqual(fillColor) && !getColor(right).isEqual(Color(255,255,255))) {
+            if ((useBatik && (right.getX() * right.getY())%9 - 3> 0) || (!useBatik)){
                 draw_point(right, fillColor);
             }else{
                 draw_point(right, Color(255,255,255));
@@ -245,7 +245,7 @@ void Drawer::queueFloodFill(Wireframe wireframe, bool useBatik) {
         }
 
         if (wireframe.isInEnvelope(top) && !getColor(top).isEqual(borderColor) && !getColor(top).isEqual(fillColor) && !getColor(top).isEqual(Color(255,255,255))) {
-            if ((useBatik && (top.getX() + top.getY())%10 - 1 > 0) || (!useBatik)){
+            if ((useBatik && (top.getX() + top.getY())%9 - 3 > 0) || (!useBatik)){
                 draw_point(top, fillColor);
             }else{
                 draw_point(top, Color(255,255,255));
@@ -254,8 +254,8 @@ void Drawer::queueFloodFill(Wireframe wireframe, bool useBatik) {
             pointQueue.push(top);
         }
 
-        if (wireframe.isInEnvelope(bottom) && !getColor(bottom).isEqual(borderColor) && !getColor(bottom).isEqual(fillColor)&& !getColor(top).isEqual(Color(255,255,255))) {
-            if ((useBatik && (bottom.getX() + bottom.getY())%10 - 1 > 0) || (!useBatik)){
+        if (wireframe.isInEnvelope(bottom) && !getColor(bottom).isEqual(borderColor) && !getColor(bottom).isEqual(fillColor)&& !getColor(bottom).isEqual(Color(255,255,255))) {
+            if ((useBatik && (bottom.getX() + bottom.getY())%9 - 3 > 0) || (!useBatik)){
                 draw_point(bottom, fillColor);
             }else{
                 draw_point(bottom, Color(255,255,255));

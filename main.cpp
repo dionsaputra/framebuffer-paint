@@ -489,12 +489,20 @@ int main() {
             hideLabels();
         } else if (inputCommand == "use-batik"){
             useBatik = true;
+            drawer.erase_canvas(wireframes,disorientation);
+            drawer.draw_canvas(wireframes,window,disorientation,useStyle,useBatik);
         }else if (inputCommand == "use-style"){
             useStyle = true;
+            drawer.erase_canvas(wireframes,disorientation);
+            drawer.draw_canvas(wireframes,window,disorientation,useStyle,useBatik);
         }else if (inputCommand == "off-batik"){
             useBatik = false;
+            drawer.erase_canvas(wireframes,disorientation);
+            drawer.draw_canvas(wireframes,window,disorientation,useStyle,useBatik);
         }else if (inputCommand == "off-style"){
             useStyle = false;
+            drawer.erase_canvas(wireframes,disorientation);
+            drawer.draw_canvas(wireframes,window,disorientation,useStyle,useBatik);
         }else{      
             cout << "Please enter a valid command" << endl;
         }
