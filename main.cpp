@@ -327,9 +327,9 @@ int main() {
     string inputCommand;
     for (int i=1; i<=100; i++) printf("\n");
     setup();
-    cout << "filename : ";
-    cin >> filename;
-    wireframes = controller.load(filename);
+    // cout << "filename : ";
+    // cin >> filename;
+    // wireframes = controller.load(filename);
     drawer.draw_canvas(wireframes, window, disorientation);
 
     // Setup input mode
@@ -350,11 +350,23 @@ int main() {
 
         hideLabels();
         if (inputCommand == "new") {
-            // TODO: add new command
+            if(!wireframes.empty()){
+                drawer.erase_canvas(wireframes,disorientation);
+            }
+                wireframes.clear();
+                currentWireframe = "";
+                
         } else if (inputCommand == "open") {
             // TODO: add open command
-        } else if (inputCommand == "line-color") {
-            // TODO: add line-color command
+            cout << "filename : ";
+            cin >> filename;
+            if(!wireframes.empty()){
+                drawer.erase_canvas(wireframes,disorientation);
+            }
+            currentWireframe = "";
+            wireframes = controller.load(filename);
+            drawer.draw_canvas(wireframes, window, disorientation);
+
         }else if(inputCommand == "select"){
             cout << "----list----" << endl;
             for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
@@ -483,7 +495,7 @@ int main() {
                 drawer.draw_wireframe(verticalScrollBarBorder);
                 redrawScrollbars();
                 setupLegend();
-                 drawer.draw_wireframe(window);
+                drawer.draw_wireframe(window);
             }
         } else if (inputCommand == "zoom") {
             tcsetattr( fileno( stdin ), TCSANOW, &newSettings );
