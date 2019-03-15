@@ -487,22 +487,40 @@ int main() {
             Wireframe wireframe(radius, nPoint, Point(xCenter, yCenter), Color(red, green, boy));
             wireframes.insert(pair<string, Wireframe>(nameShape, wireframe));
             drawer.draw_canvas(wireframes,window,disorientation,true,useBatik);
-        } else if (inputCommand == "edit-line" && currentWireframe != "") {
+        } else if (inputCommand == "thickness" && currentWireframe != "") {
             float thickness;
-            char lineStyle;
 
-            cout << "thickness: ";
+            cout << "width: ";
             cin >> thickness;
-            cout << "line style (d/s): ";
-            cin >> lineStyle;
             
             drawer.erase_canvas(wireframes,disorientation);
             if(thickness >= 1.0f){
                 wireframes.find(currentWireframe)->second.setThickness(thickness);
-            }   
+            };
+            drawer.draw_canvas(wireframes,window, disorientation, true, useBatik);
+        } else if (inputCommand == "line-style" && currentWireframe != "") {
+            char lineStyle;
+
+            cout << "dot/solid (d/s): ";
+            cin >> lineStyle;
+            
+            drawer.erase_canvas(wireframes,disorientation);   
 
             if(lineStyle == 's' || lineStyle == 'd'){
                 wireframes.find(currentWireframe)->second.setLineStyle(lineStyle);
+            }
+            drawer.draw_canvas(wireframes,window, disorientation, true, useBatik);
+        } else if (inputCommand == "line-color" && currentWireframe != "") {
+            int red, green, blue;
+
+            cout << "color(r g b): ";
+            cin >> red >> green >> blue;
+            
+            drawer.erase_canvas(wireframes,disorientation);
+            if(red >= 0 && red <=255 && green >= 0 && green <=255 && blue >= 0 && blue <=255){
+                wireframes.find(currentWireframe)->second.setBorderColor(Color(red, green, blue));
+            } else {
+                cout << "Wrong format" << endl;
             }
             drawer.draw_canvas(wireframes,window, disorientation, true, useBatik);
         } else if (inputCommand == "show-label"){
