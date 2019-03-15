@@ -65,6 +65,10 @@ void setupWindow() {
     diffX = (float) (xres-350)/CANVAS_WIDTH;
     diffY = (float) (yres-100)/CANVAS_LENGTH;
     drawer.draw_wireframe(window);
+
+    statusBar = createRectangle(Point(350,yres-230),Point(xres-30,yres-50));
+    statusBar.setBorderColor(Color(0,250,0));
+    drawer.draw_wireframe(statusBar);
 }
 
 void setupHorizontalScrollBarBorder() {
@@ -76,32 +80,32 @@ void setupHorizontalScrollBarBorder() {
 
 void setupVerticalScrollBarBorder() {
     int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
-    verticalScrollBarBorder = createRectangle(Point(xres-49,50), Point(xres-31, yres-230));
+    verticalScrollBarBorder = createRectangle(Point(xres-49,50), Point(xres-31, yres-250));
     verticalScrollBarBorder.setBorderColor(Color(0,250,0));
     drawer.draw_wireframe(verticalScrollBarBorder);
 }
 
 void setupScrollbars() {
     int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
-    horizontalScrollBar = createRectangle(Point(450,yres-50), Point(xres-250, yres-30));
+    horizontalScrollBar = createRectangle(Point(450,yres-249), Point(xres-250, yres-230));
     horizontalScrollBar.setBorderColor(Color(0,250,0));
     horizontalScrollBar.setFillColor(Color(0,250,0));
-    horizontalScrollBar.setInnerPoint(Point((450+xres-250)/2, (yres-50+yres-30)/2));
+    horizontalScrollBar.setInnerPoint(Point((450+xres-250)/2, (yres-249+yres-230)/2));
     drawer.draw_wireframe(horizontalScrollBar);
     drawer.queueFloodFill(horizontalScrollBar);
 
-    verticalScrollBar = createRectangle(Point(xres-50,250), Point(xres-30, yres-250));
+    verticalScrollBar = createRectangle(Point(xres-50,250), Point(xres-30, yres-450));
     verticalScrollBar.setBorderColor(Color(0,250,0));
     verticalScrollBar.setFillColor(Color(0,250,0));
-    verticalScrollBar.setInnerPoint(Point((xres-50+xres-30)/2, (250+yres-250)/2));
+    verticalScrollBar.setInnerPoint(Point((xres-50+xres-30)/2, (250+yres-450)/2));
     drawer.draw_wireframe(verticalScrollBar);
     drawer.queueFloodFill(verticalScrollBar);
 }
 
 void resizeHorizontalScrollBar(int dx){
     int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
-    Point newTopLeft =  Point(horizontalScrollBar.getTopLeft().getX()+dx,yres-50);
-    Point newBottomRight = Point(horizontalScrollBar.getBottomRight().getX()-dx,yres-30);
+    Point newTopLeft =  Point(horizontalScrollBar.getTopLeft().getX()+dx,yres-249);
+    Point newBottomRight = Point(horizontalScrollBar.getBottomRight().getX()-dx,yres-230);
     horizontalScrollBar = createRectangle(newTopLeft, newBottomRight);
     horizontalScrollBar.setBorderColor(Color(0,250,0));
     horizontalScrollBar.setFillColor(Color(0,250,0));
@@ -308,12 +312,12 @@ int main() {
                     disorientation.translate(0,5);
                     moveScrollBar(&verticalScrollBar,0,-5 * diffY);
                     // Scroll up
-                } else if (c == 'a' && horizontalScrollBar.getTopLeft().getX()>250){
+                } else if (c == 'a' && horizontalScrollBar.getTopLeft().getX()>350){
                     drawer.erase_canvas(wireframes,disorientation);
                     disorientation.translate(5,0);
                     moveScrollBar(&horizontalScrollBar,-5 * diffX,0);
                     // Scroll left
-                } else if (c == 's' && verticalScrollBar.getBottomRight().getY()<drawer.vinfo.yres-50){
+                } else if (c == 's' && verticalScrollBar.getBottomRight().getY()<drawer.vinfo.yres-250){
                     drawer.erase_canvas(wireframes,disorientation);
                     disorientation.translate(0,-5);
                     moveScrollBar(&verticalScrollBar,0,5*diffY);
