@@ -64,7 +64,6 @@ void setupWindow() {
     disorientation = window.getTopLeft();
     diffX = (float) (xres-300)/CANVAS_WIDTH;
     diffY = (float) (yres-100)/CANVAS_LENGTH;
-    cout << diffX << "," << diffY << endl;
     drawer.draw_wireframe(window);
 }
 
@@ -237,9 +236,17 @@ void setup() {
     redrawScrollbars();
 }
 
-int main() {    
+void hideLabels(){
+    for (auto itr = wireframes.begin(); itr != wireframes.end(); itr++) {
+        string name =  itr->first;
+        Point loc = itr->second.getInnerPoint();
+        loc.translate(200, 0);
+        drawer.draw_word(name, loc, 25, 3, Color(0,0,0));
+    }
+    drawer.draw_canvas(wireframes,window,disorientation);
+}
 
-    
+int main() {        
     // Load file
     string inputCommand;
     for (int i=1; i<=100; i++) printf("\n");
@@ -265,6 +272,7 @@ int main() {
         cout << "$";
         flush(cout);
         cin >> inputCommand;
+        hideLabels();
 
         if(inputCommand == "select"){
             cout << "----list----" << endl;
@@ -277,6 +285,7 @@ int main() {
             }
             cout << "------------" << endl;
             cin >> currentWireframe;
+            for (auto & c: currentWireframe) c = toupper(c);
             cout << currentWireframe <<" selected" << endl;
         } else if (inputCommand == "save") {
             cout << "filename: ";
@@ -350,7 +359,9 @@ int main() {
                 }
 
                 drawer.draw_canvas(wireframes,window,disorientation);
-                setup();
+                drawer.draw_wireframe(horizontalScrollBarBorder);
+                drawer.draw_wireframe(verticalScrollBarBorder);
+                drawer.draw_wireframe(window);
             }
         } else if (inputCommand == "rotate" && currentWireframe != ""){
             tcsetattr( fileno( stdin ), TCSANOW, &newSettings );
@@ -371,9 +382,10 @@ int main() {
                     tcsetattr( fileno( stdin ), TCSANOW, &oldSettings );    
                     break;
                 }
-
                 drawer.draw_canvas(wireframes,window,disorientation);
-                setup();
+                drawer.draw_wireframe(horizontalScrollBarBorder);
+                drawer.draw_wireframe(verticalScrollBarBorder);
+                drawer.draw_wireframe(window);
             }
         } else if (inputCommand == "zoom") {
             tcsetattr( fileno( stdin ), TCSANOW, &newSettings );
@@ -437,6 +449,8 @@ int main() {
             cout << "color (r g b): ";
             cin >> red >> green >> boy;
 
+            for (auto & c: nameShape) c = toupper(c);
+
             Wireframe wireframe(radius, nPoint, Point(xCenter, yCenter), Color(red, green, boy));
             wireframes.insert(pair<string, Wireframe>(nameShape, wireframe));
             drawer.draw_canvas(wireframes,window,disorientation);
@@ -458,12 +472,15 @@ int main() {
                 wireframes.find(currentWireframe)->second.setLineStyle(lineStyle);
             }
             drawer.draw_canvas(wireframes,window, disorientation);
-        } else if (inputCommand == "label"){
+        } else if (inputCommand == "show-label"){
             for (auto itr = wireframes.begin(); itr != wireframes.end(); itr++) {
                 string name =  itr->first;
-                Point loc = itr->second.getTopLeft();
-                drawer.draw_word(name, loc, 6, 5, Color(20,220,30));
+                Point loc = itr->second.getInnerPoint();
+                loc.translate(200, 0);
+                drawer.draw_word(name, loc, 25, 3, Color(255,255,255));
             }
+        } else if (inputCommand == "hide-label"){
+            hideLabels();
         } else {
             cout << "Please enter a valid command" << endl;
         }

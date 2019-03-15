@@ -3,7 +3,6 @@
 Wireframe::Wireframe(){}
 
 Wireframe::Wireframe(vector<Point> _controlPoint, Color _borderColor) {
-    // cout << "ctor called 1" << endl;
     points = _controlPoint;
     borderColor = _borderColor;
     lineStyle = 's';
@@ -13,7 +12,6 @@ Wireframe::Wireframe(vector<Point> _controlPoint, Color _borderColor) {
 }
 
 Wireframe::Wireframe(vector<Point> _controlPoint, Point _innerPoint){
-    // cout << "ctor called 2" << endl;
     points = _controlPoint;
     innerPoint = _innerPoint;
     lineStyle = 's';
@@ -23,7 +21,6 @@ Wireframe::Wireframe(vector<Point> _controlPoint, Point _innerPoint){
 }
 
 Wireframe::Wireframe(vector<Point> _controlPoint, Point _innerPoint, Color _borderColor, Color _colorFill, int _priority){
-    // cout << "ctor called 3" << endl;
     fillColor = _colorFill;
     borderColor = _borderColor;
     points = _controlPoint;
@@ -36,7 +33,6 @@ Wireframe::Wireframe(vector<Point> _controlPoint, Point _innerPoint, Color _bord
 }
 
 Wireframe::Wireframe(vector<Point> _controlPoint, Point _innerPoint, Color _borderColor, Color _colorFill, int _priority, float _thickness, char _lineStyle){
-    // cout << "ctor called 4" << endl;
     fillColor = _colorFill;
     borderColor = _borderColor;
     points = _controlPoint;
@@ -49,18 +45,15 @@ Wireframe::Wireframe(vector<Point> _controlPoint, Point _innerPoint, Color _bord
 }
 
 Wireframe::Wireframe(int radius, int numPoint, Point centerPoint, Color color) {
-    // cout << "ctor called 5" << endl;
     vector<Point> controlPoint;
     innerPoint = centerPoint;
     lineStyle = 's';
     thickness = 1;
     Point P(centerPoint.getX() + radius, centerPoint.getY());
     int degree = 360 / numPoint;
-    cout << degree << endl;
     for(int i = 0; i < numPoint; i++) {
         P.rotate(centerPoint, degree);
         controlPoint.push_back(P);
-        controlPoint[i].display();
     }
     points = controlPoint;
     borderColor = color;
@@ -314,7 +307,6 @@ Point Wireframe::intersect(Point inside, Point outside, Wireframe window) {
 
         } else {    // case 5
             int ySearch = (xMax - xOut) * dy /dx + yOut;
-            // cout << ySearch << endl;
             return Point(xMax, ySearch);
         }
     } else {
