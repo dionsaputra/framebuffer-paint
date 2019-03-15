@@ -45,6 +45,34 @@ Point disorientation;
 float diffX,diffY;
 bool useBatik;
 
+void credits(){
+    drawer.clear_screen();
+    for (int y = drawer.vinfo.yres - 1; y >= 0; y-=5){
+        drawer.draw_word("DONATLAB",Point(400, y), 25, 4, Color(74, 123, 192));
+        drawer.draw_word("MUHAMAD ILYAS MUSTAFA - SMAN 4 BANDUNG",Point(100, y + 150), 11, 2, Color(20, 200, 100));
+        drawer.draw_word("DION SAPUTRA - SMAN 10 PADANG", Point(100, y + 200), 10, 2, Color(100, 100, 171));
+        drawer.draw_word("DAFI IHSANDIYA FARAZ - SMAN 3 BANDUNG", Point(100, y + 250), 11, 2, Color(154, 200, 200));
+        drawer.draw_word("KRISHNA AURELIO N - SMAN 7 CIMAHI", Point(100, y + 300), 11, 2, Color(12, 32, 111));
+        drawer.draw_word("RIFO AHMAD GENADI - SMAN 1 GARUT", Point(100, y + 350), 11, 2, Color(131, 100, 171));
+        drawer.draw_word("ADAM FADHEL R - SMAN 2 TANGERANG", Point(100, y + 400), 11, 2, Color(153, 132, 12));
+	    
+        usleep(20000);
+
+	if (y <= 5){
+        drawer.clear_screen();
+		break;
+	}
+        drawer.draw_word("DONATLAB", Point(400, y), 25, 4, Color(0, 0, 0));
+        drawer.draw_word("MUHAMAD ILYAS MUSTAFA - SMAN 4 BANDUNG", Point(100, y + 150), 11, 2, Color(0, 0, 0));
+        drawer.draw_word("DION SAPUTRA - SMAN 10 PADANG", Point(100, y + 200), 11, 2, Color(0, 0, 0));
+        drawer.draw_word("DAFI IHSANDIYA FARAZ - SMAN 3 BANDUNG", Point(100, y + 250), 11, 2, Color(0, 0, 0));
+        drawer.draw_word("KRISHNA AURELIO N - SMAN 7 CIMAHI", Point(100, y + 300), 11, 2, Color(0, 0, 0));
+        drawer.draw_word("RIFO AHMAD GENADI - SMAN 1 GARUT", Point(100, y + 350), 11, 2, Color(0, 0, 0));
+        drawer.draw_word("ADAM FADHEL R - SMAN 2 TANGERANG", Point(100, y + 400), 11, 2, Color(0, 0, 0));
+	    
+    }
+}
+
 Wireframe createRectangle(Point topLeft, Point bottomRight) {
     vector<Point> points;
     points.push_back(topLeft); 
@@ -550,6 +578,10 @@ int main() {
         } else if (inputCommand == "off-batik"){
             useBatik = false;
             drawer.erase_canvas(wireframes,disorientation);
+            drawer.draw_canvas(wireframes,window,disorientation,true,useBatik);
+        }else if (inputCommand == "credits"){
+            credits();
+            setup();
             drawer.draw_canvas(wireframes,window,disorientation,true,useBatik);
         } else if (inputCommand == "delete" && currentWireframe != ""){
             drawer.erase_canvas(wireframes,disorientation);
