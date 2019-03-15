@@ -188,6 +188,7 @@ bool checkZoomIn(int dx, int dy){
 
 void zoom(float scale){
     int dx,dy;
+    int xres = drawer.vinfo.xres, yres = drawer.vinfo.yres;
     
     if (scale < 1){
         dx = -35;
@@ -205,15 +206,16 @@ void zoom(float scale){
         drawer.unfill_wireframe(verticalScrollBar);
 
         drawer.erase_canvas(wireframes,disorientation);
-
         for (auto itr = wireframes.begin(); itr!=wireframes.end();itr++){
-            itr->second.scale(scale);
+            itr->second.scale(Point((250+xres-50)/2, (50+yres-50)/2), scale);
         }
         
         resizeHorizontalScrollBar(dx);
         resizeVerticalScrollBar(dy);
         drawer.draw_canvas(wireframes,window,disorientation);
         redrawScrollbars();
+        drawer.draw_wireframe(horizontalScrollBarBorder);
+        drawer.draw_wireframe(verticalScrollBarBorder);
     }
 }
 
