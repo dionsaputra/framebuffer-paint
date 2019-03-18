@@ -72,9 +72,9 @@ public:
     int condition_S(int x, int y, int scale, int pos_x, int pos_y);
     int condition_T(int x, int y, int scale, int pos_x, int pos_y);
     int condition_U(int x, int y, int scale, int pos_x, int pos_y);
-    // int condition_V(int x, int y, int scale, int pos_x, int pos_y);
+    int condition_V(int x, int y, int scale, int pos_x, int pos_y);
     // int condition_W(int x, int y, int scale, int pos_x, int pos_y);
-    // int condition_X(int x, int y, int scale, int pos_x, int pos_y);
+    int condition_X(int x, int y, int scale, int pos_x, int pos_y);
     int condition_Y(int x, int y, int scale, int pos_x, int pos_y);
     int condition_Z(int x, int y, int scale, int pos_x, int pos_y);
     int condition_dash(int x, int y, int scale, int pos_x, int pos_y);
